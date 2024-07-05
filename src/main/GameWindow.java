@@ -19,6 +19,8 @@ public class GameWindow {
 		jFrame.setLocationRelativeTo(null); //Places the game window in the center of the screen
 		jFrame.setVisible(true);
 		
+		p_gamePanel.startGameThread();
+		
 	}
 
 }
