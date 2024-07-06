@@ -7,13 +7,15 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import entity.Player;
+
 //The painting
 public class GamePanel extends JPanel implements Runnable {
 	
 	//Variables for defining panel size
-	final int originalTileSize = 16;
-	final int scale = 3;
-	final int scaledTileSize = originalTileSize * scale;
+	final int originalTileSize = 32;
+	final int scale = 2;
+	public final int scaledTileSize = originalTileSize * scale;
 	final int maxScreenCol = 16;
 	final int maxScreenRow = 12;
 	final int screenWidth = scaledTileSize * maxScreenCol;
@@ -27,6 +29,9 @@ public class GamePanel extends JPanel implements Runnable {
 	int playerX = 100;
 	int playerY = 100;
 	int playerSpeed = 4; //4 pixels
+	
+	//Entities
+	Player player = new Player(this, keyHandler);
 	
 	Thread gameThread;
 	
@@ -69,19 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-		//Movement
-		if(keyHandler.upPressed) {
-			playerY -= playerSpeed;
-		}
-		else if(keyHandler.leftPressed) {
-			playerX -= playerSpeed;
-		}
-		else if(keyHandler.rightPressed) {
-			playerX += playerSpeed;
-		}
-		else if(keyHandler.downPressed) {
-			playerY += playerSpeed;
-		}
+		player.update();
 	}
 	
 	//Graphics acts as the paint brush allowing us to draw
@@ -91,8 +84,8 @@ public class GamePanel extends JPanel implements Runnable {
 		//Change graphics to graphics2D
 		Graphics2D g2 = (Graphics2D)g;
 		
-		g2.setColor(Color.BLACK);
-		g2.fillRect(playerX, playerY, scaledTileSize, scaledTileSize); //x, y, w, h
+		player.draw(g2);
+		
 		g2.dispose(); //Save memory after the drawing is created
 	}
 
