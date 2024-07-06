@@ -8,30 +8,30 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tile.TileManager;
 
 //The painting
 public class GamePanel extends JPanel implements Runnable {
 	
 	//Variables for defining panel size
 	final int originalTileSize = 32;
-	final int scale = 2;
+	final int scale = 1;
 	public final int scaledTileSize = originalTileSize * scale;
-	final int maxScreenCol = 16;
-	final int maxScreenRow = 12;
-	final int screenWidth = scaledTileSize * maxScreenCol;
-	final int screenHeight = scaledTileSize * maxScreenRow;
+	public final int maxScreenCol = 32;
+	public final int maxScreenRow = 24;
+	public final int screenWidth = scaledTileSize * maxScreenCol;
+	public final int screenHeight = scaledTileSize * maxScreenRow;
 	
 	//Variable for FPS
 	int FPS = 60;
 	
-	//Key binds instance and starting position
+	//Key binds
 	KeyHandler keyHandler = new KeyHandler();
-	int playerX = 100;
-	int playerY = 100;
-	int playerSpeed = 4; //4 pixels
 	
 	//Entities
 	Player player = new Player(this, keyHandler);
+	
+	TileManager tileManager = new TileManager(this);
 	
 	Thread gameThread;
 	
@@ -84,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
 		//Change graphics to graphics2D
 		Graphics2D g2 = (Graphics2D)g;
 		
+		tileManager.draw(g2);
 		player.draw(g2);
 		
 		g2.dispose(); //Save memory after the drawing is created
