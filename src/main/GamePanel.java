@@ -43,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
 	CreateLayer layer2 = new CreateLayer(this, tileManager, 1);
 	CreateLayer layer3 = new CreateLayer(this, tileManager, 2);
 	
+	public CollisionChecker collisionChecker = new CollisionChecker(this);
 	Thread gameThread;
 	
 	public GamePanel(){

@@ -11,7 +11,7 @@ public class CreateLayer {
 
 	private GamePanel gamePanel; 
 	private TileManager tileManager;
-	int mapTileNum[][];
+	public int mapTileNum[][];
 	
 	public CreateLayer(GamePanel p_gamePanel, TileManager p_tileManager, int p_imageSelect) {
 		this.gamePanel = p_gamePanel;

@@ -2,6 +2,7 @@ package entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -25,6 +26,9 @@ public class Player extends Entity {
 		screenX = gamePanel.screenWidth / 2 - (gamePanel.scaledTileSize/2);
 		screenY = gamePanel.screenHeight / 2 - (gamePanel.scaledTileSize/2);
 		
+		solidArea = new Rectangle(4 * gamePanel.scale, 24 * gamePanel.scale, 28 * gamePanel.scale, 24 * gamePanel.scale);
+		//solidArea = new Rectangle(4, 24, 28, 24);
+		
 		setDefaultValues();
 		getPlayerImage();
 	}
@@ -32,6 +36,8 @@ public class Player extends Entity {
 	public void setDefaultValues() {
 		worldX_pos = 480 * gamePanel.scale;
 		worldY_pos = 220 * gamePanel.scale;
+		//worldX_pos = 0;
+		//worldY_pos = 0;
 		speed = 4;
 		direction = "down";
 	}
@@ -70,24 +76,41 @@ public class Player extends Entity {
 	
 	public void update() {
 		if(keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
-			//Movement
+			//Set direction
 			if(keyHandler.upPressed) {
 				direction = "up";
-				worldY_pos -= speed;
 			}
 			else if(keyHandler.leftPressed) {
 				direction = "left";
-				worldX_pos -= speed;
 			}
 			else if(keyHandler.rightPressed) {
 				direction = "right";
-				worldX_pos += speed;
 			}
 			else if(keyHandler.downPressed) {
 				direction = "down";
-				worldY_pos += speed;
 			}
 			
+			//Check tile collision for movement
+			collisionOn = false;
+			gamePanel.collisionChecker.checkTile(this);
+			if(collisionOn == false) {
+				switch(direction) {
+				case "up":
+					worldY_pos -= speed;
+					break;
+				case "down":
+					worldY_pos += speed;
+					break;
+				case "left":
+					worldX_pos -= speed;
+					break;
+				case "right":
+					worldX_pos += speed;
+					break;
+				}
+			}
+			
+			//Animation
 			spriteCounter++;
 			if(spriteCounter > 10) {
 				if(spriteNum == 1) {
@@ -178,6 +201,8 @@ public class Player extends Entity {
 		}
 
 		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.scale, 48 * gamePanel.scale, null);
+		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
+		//p_g2.fill(solidArea);
 	}
 	
 }

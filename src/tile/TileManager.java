@@ -16,7 +16,7 @@ public class TileManager {
 
 	GamePanel gamePanel;
 	
-	ArrayList<Tile> allTiles;
+	public ArrayList<Tile> allTiles;
 	ArrayList<Integer> valuesList;
 	
 	public TileManager(GamePanel p_gamePanel) {
