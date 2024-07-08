@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import tile.CreateLayer;
 import tile.TileManager;
 
 //The painting
@@ -17,8 +18,8 @@ public class GamePanel extends JPanel implements Runnable {
 	final int originalTileSize = 32;
 	final int scale = 1;
 	public final int scaledTileSize = originalTileSize * scale;
-	public final int maxScreenCol = 32;
-	public final int maxScreenRow = 24;
+	public final int maxScreenCol = 24;
+	public final int maxScreenRow = 20;
 	public final int screenWidth = scaledTileSize * maxScreenCol;
 	public final int screenHeight = scaledTileSize * maxScreenRow;
 	
@@ -32,6 +33,9 @@ public class GamePanel extends JPanel implements Runnable {
 	Player player = new Player(this, keyHandler);
 	
 	TileManager tileManager = new TileManager(this);
+	CreateLayer layer1 = new CreateLayer(this, tileManager, 0);
+	CreateLayer layer2 = new CreateLayer(this, tileManager, 1);
+	CreateLayer layer3 = new CreateLayer(this, tileManager, 2);
 	
 	Thread gameThread;
 	
@@ -84,7 +88,9 @@ public class GamePanel extends JPanel implements Runnable {
 		//Change graphics to graphics2D
 		Graphics2D g2 = (Graphics2D)g;
 		
-		tileManager.draw(g2);
+		layer1.draw(g2);
+		layer2.draw(g2);
+		layer3.draw(g2);
 		player.draw(g2);
 		
 		g2.dispose(); //Save memory after the drawing is created
