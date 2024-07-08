@@ -16,12 +16,18 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	//Variables for defining panel size
 	final int originalTileSize = 32;
-	final int scale = 1;
+	public final int scale = 2;
 	public final int scaledTileSize = originalTileSize * scale;
 	public final int maxScreenCol = 24;
 	public final int maxScreenRow = 20;
-	public final int screenWidth = scaledTileSize * maxScreenCol;
-	public final int screenHeight = scaledTileSize * maxScreenRow;
+	public final int screenWidth = originalTileSize * maxScreenCol;
+	public final int screenHeight = originalTileSize * maxScreenRow;
+	
+	//World settings
+	public final int maxWorldCol = 50;
+	public final int maxWorldRow = 50;
+	public final int worldWidth = scaledTileSize * maxWorldCol;
+	public final int worldHeight = scaledTileSize * maxWorldRow;
 	
 	//Variable for FPS
 	int FPS = 60;
@@ -30,7 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
 	KeyHandler keyHandler = new KeyHandler();
 	
 	//Entities
-	Player player = new Player(this, keyHandler);
+	public Player player = new Player(this, keyHandler);
 	
 	TileManager tileManager = new TileManager(this);
 	CreateLayer layer1 = new CreateLayer(this, tileManager, 0);
@@ -43,6 +49,8 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setDoubleBuffered(true); //Enables better rendering performance
 	
+		this.setBackground(Color.black);
+		
 		this.addKeyListener(keyHandler);
 		this.setFocusable(true);
 	}

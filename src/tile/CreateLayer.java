@@ -17,7 +17,7 @@ public class CreateLayer {
 		this.gamePanel = p_gamePanel;
 		this.tileManager = p_tileManager;
 		
-		mapTileNum = new int[gamePanel.maxScreenCol][gamePanel.maxScreenRow];
+		mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
 		
 		if(p_imageSelect == 0) {
 			tileManager.getTileImage("res/maps/palletTown_Ground.csv", false);
@@ -42,9 +42,9 @@ public class CreateLayer {
 	        int row = 0;
 	        
 	        String line;
-	        while ((line = br.readLine()) != null && row < gamePanel.maxScreenRow) {
+	        while ((line = br.readLine()) != null && row < gamePanel.maxWorldRow) {
 	            String[] numbers = line.split(",");
-	            for (col = 0; col < numbers.length && col < gamePanel.maxScreenCol; col++) {
+	            for (col = 0; col < numbers.length && col < gamePanel.maxWorldCol; col++) {
 	                int num = Integer.parseInt(numbers[col].trim());
 	                mapTileNum[col][row] = num;
 	            }
@@ -60,30 +60,37 @@ public class CreateLayer {
 	
 	
 	public void draw(Graphics2D p_g2) {
-		int col = 0;
-		int row = 0;
-		int x = 0;
-		int y = 0;
+		int worldCol = 0;
+		int worldRow = 0;
 				
-		while(col < gamePanel.maxScreenCol && row < gamePanel.maxScreenRow) {
+		while(worldCol < gamePanel.maxWorldCol && worldRow < gamePanel.maxWorldRow) {
 			
-			int tileNum = mapTileNum[col][row];
+			int tileNum = mapTileNum[worldCol][worldRow];
 			
-			for (Tile tile : tileManager.allTiles) {
-				if (tile.value == tileNum) {
-		            p_g2.drawImage(tile.image, x, y, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
-		            break;
-		        }
+			int worldX = worldCol * gamePanel.scaledTileSize;
+			int worldY = worldRow * gamePanel.scaledTileSize;
+			int screenX = worldX - gamePanel.player.worldX_pos + gamePanel.player.screenX;
+			int screenY = worldY - gamePanel.player.worldY_pos + gamePanel.player.screenY;
+			
+			
+			if (worldX + gamePanel.scaledTileSize > gamePanel.player.worldX_pos - gamePanel.player.screenX && 
+				worldX - gamePanel.scaledTileSize < gamePanel.player.worldX_pos + gamePanel.player.screenX && 
+				worldY + gamePanel.scaledTileSize > gamePanel.player.worldY_pos - gamePanel.player.screenY && 
+				worldY - gamePanel.scaledTileSize < gamePanel.player.worldY_pos + gamePanel.player.screenY) {
+				
+				for (Tile tile : tileManager.allTiles) {
+					if (tile.value == tileNum) {
+			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
+			            break;
+			        }
+				}
 			}
 			
-			col++;
-			x += gamePanel.scaledTileSize;
+			worldCol++;
 			
-			if(col == gamePanel.maxScreenCol) {
-				col = 0;
-				x = 0;
-				row++;
-				y += gamePanel.scaledTileSize;
+			if(worldCol == gamePanel.maxWorldCol) {
+				worldCol = 0;
+				worldRow++;
 			}
 		}
 
