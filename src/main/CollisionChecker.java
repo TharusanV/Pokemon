@@ -1,6 +1,7 @@
 package main;
 
 import entity.Entity;
+import tile.CreateLayer;
 import tile.Tile;
 
 public class CollisionChecker {
