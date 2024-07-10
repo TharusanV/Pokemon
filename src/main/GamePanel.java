@@ -8,8 +8,10 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import entity.Player;
+import object.SuperObject;
 import tile.CreateLayer;
 import tile.TileManager;
+import ui.BaseUI;
 
 //The painting
 public class GamePanel extends JPanel implements Runnable {
@@ -32,18 +34,19 @@ public class GamePanel extends JPanel implements Runnable {
 	//Variable for FPS
 	int FPS = 60;
 	
-	//Key binds
-	KeyHandler keyHandler = new KeyHandler();
-	
-	//Entities
-	public Player player = new Player(this, keyHandler);
-	
 	TileManager tileManager = new TileManager(this);
 	CreateLayer layer1 = new CreateLayer(this, tileManager, 0);
 	CreateLayer layer2 = new CreateLayer(this, tileManager, 1);
 	CreateLayer layer3 = new CreateLayer(this, tileManager, 2);
 	
+	
+	KeyHandler keyHandler = new KeyHandler();
 	public CollisionChecker collisionChecker = new CollisionChecker(this);
+	public AssetSetter assetSetter = new AssetSetter(this);
+	public BaseUI ui = new BaseUI(this);
+	public Player player = new Player(this, keyHandler);
+	public SuperObject obj[] = new SuperObject[10];
+	
 	Thread gameThread;
 	
 	public GamePanel(){
@@ -54,6 +57,10 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		this.addKeyListener(keyHandler);
 		this.setFocusable(true);
+	}
+	
+	public void setUpGame() {
+		//assetSetter.setObject();
 	}
 	
 	public void startGameThread() {
@@ -100,7 +107,16 @@ public class GamePanel extends JPanel implements Runnable {
 		layer1.draw(g2);
 		layer2.draw(g2);
 		layer3.draw(g2);
+		
+		for(int i = 0; i < obj.length; i++) {
+			if(obj[i] != null) {
+				obj[i].draw(g2, this);
+			}
+		}
+		
 		player.draw(g2);
+		
+		ui.draw(g2);
 		
 		g2.dispose(); //Save memory after the drawing is created
 	}
