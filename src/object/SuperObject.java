@@ -26,7 +26,7 @@ public class SuperObject {
 			worldY + gamePanel.scaledTileSize > gamePanel.player.worldY_pos - gamePanel.player.screenY && 
 			worldY - gamePanel.scaledTileSize < gamePanel.player.worldY_pos + gamePanel.player.screenY) {
 			
-				g2.drawImage(image, screenX, screenY, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
+			g2.drawImage(image, screenX, screenY, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
 		}
 	}
 }

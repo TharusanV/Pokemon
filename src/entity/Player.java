@@ -13,14 +13,14 @@ import main.KeyHandler;
 
 public class Player extends Entity {
 
-	GamePanel gamePanel;
 	private KeyHandler keyHandler;
 	
 	public final int screenX;
 	public final int screenY;
 	
 	public Player(GamePanel p_gamePanel, KeyHandler p_keyHandler) {
-		this.gamePanel = p_gamePanel;
+		super(p_gamePanel);
+		
 		this.keyHandler = p_keyHandler;
 		
 		screenX = gamePanel.screenWidth / 2 - (gamePanel.scaledTileSize/2);
@@ -32,6 +32,7 @@ public class Player extends Entity {
 		
 		setDefaultValues();
 		getCharacterImage("player");
+		
 	}
 	
 	public void setDefaultValues() {
@@ -63,6 +64,9 @@ public class Player extends Entity {
 			//Check object collision
 			int objIndex = gamePanel.collisionChecker.checkObject(this, true);
 			pickUpObject(objIndex);
+			//Check NPC collision
+			int npcIndex = gamePanel.collisionChecker.checkEntity(this, gamePanel.npc);
+			interactNPC(npcIndex);
 			
 			if(collisionOn == false) {
 				switch(direction) {
@@ -115,6 +119,13 @@ public class Player extends Entity {
 			case "Pokeball":
 				
 			}
+		}
+	}
+	
+	
+	public void interactNPC(int i) {
+		if(i != 999) {
+			
 		}
 	}
 	
@@ -185,7 +196,7 @@ public class Player extends Entity {
 
 		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.scale, 48 * gamePanel.scale, null);
 		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
-		//p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+		p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 	}
 	
 }

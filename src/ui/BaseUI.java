@@ -32,7 +32,7 @@ public class BaseUI {
 	public void draw(Graphics2D g2) {
 		g2.setFont(arial_40);
 		g2.setColor(Color.RED);
-		g2.drawString("test", 50, 50);
+		//g2.drawString("test", 50, 50);
 		//g2.drawImage(keyImage, gamePanel.scaledTileSize/2, gamePanel.scaledTileSize/2, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
 		
 		if(messageOn == true) {

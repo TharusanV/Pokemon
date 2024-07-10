@@ -10,6 +10,12 @@ public class KeyHandler implements KeyListener {
 	public boolean rightPressed;
 	public boolean downPressed;
 	
+	private GamePanel gp;
+	
+	public KeyHandler(GamePanel gp) {
+		this.gp = gp;
+	}
+	
 	@Override
 	public void keyTyped(KeyEvent e) {	
 	}

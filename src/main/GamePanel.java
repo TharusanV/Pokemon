@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import entity.Entity;
 import entity.Player;
 import object.SuperObject;
 import tile.CreateLayer;
@@ -40,12 +41,18 @@ public class GamePanel extends JPanel implements Runnable {
 	CreateLayer layer3 = new CreateLayer(this, tileManager, 2);
 	
 	
-	KeyHandler keyHandler = new KeyHandler();
+	KeyHandler keyHandler = new KeyHandler(this);
 	public CollisionChecker collisionChecker = new CollisionChecker(this);
 	public AssetSetter assetSetter = new AssetSetter(this);
 	public BaseUI ui = new BaseUI(this);
 	public Player player = new Player(this, keyHandler);
 	public SuperObject obj[] = new SuperObject[10];
+	public Entity npc[] = new Entity[10];
+	
+	//GameStates
+	public int gameState;
+	public final int playState = 1;
+	public final int battleState = 2;
 	
 	Thread gameThread;
 	
@@ -61,6 +68,8 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public void setUpGame() {
 		//assetSetter.setObject();
+		assetSetter.setNPC();
+		gameState = playState;
 	}
 	
 	public void startGameThread() {
@@ -94,7 +103,19 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void update() {
-		player.update();
+		if(gameState == playState) {
+			//Player
+			player.update();
+			//NPC
+			for(int i = 0; i < npc.length; i++) {
+				if(npc[i] != null) {
+					npc[i].update();
+				}
+			}
+		}
+		if(gameState == battleState) {
+			
+		}
 	}
 	
 	//Graphics acts as the paint brush allowing us to draw
@@ -111,6 +132,12 @@ public class GamePanel extends JPanel implements Runnable {
 		for(int i = 0; i < obj.length; i++) {
 			if(obj[i] != null) {
 				obj[i].draw(g2, this);
+			}
+		}
+		
+		for(int i = 0; i < npc.length; i++) {
+			if(npc[i] != null) {
+				npc[i].draw(g2);
 			}
 		}
 		
