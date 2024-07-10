@@ -108,15 +108,15 @@ public class Attack {
     	damage_base /= 50; 
     	damage_base = Math.floor(damage_base) + 2;
     	
-    	if(pokemon.getPokemonType1().ordinal() == this.typeOfMove.ordinal()) {
+    	if(pokemon.getType1().ordinal() == this.typeOfMove.ordinal()) {
     		damage_base *= 1.5; 
     	}
     	
-    	double effectiveness1 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getPokemonType1());
+    	double effectiveness1 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getType1());
     	double effectiveness2 = 1.00;
     	
-    	if(enemy.getPokemonType2() != null) {
-    		effectiveness2 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getPokemonType2());
+    	if(enemy.getType2() != null) {
+    		effectiveness2 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getType2());
     	}
     	
     	int damage = (int) (damage_base * effectiveness1 * effectiveness2);

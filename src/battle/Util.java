@@ -83,10 +83,10 @@ public class Util {
 				String[] parts = type.split("/");
 				String type1 = parts[0];
 				String type2 = parts[1];
-				poke = new Pokemon(name, obtainType(type1), obtainType(type2), health, att, def, specialAtt, def);
+				poke = new Pokemon(name, 5, 500, obtainType(type1), obtainType(type2), health, att, def, specialAtt, def);
 			}
 			else {
-				poke = new Pokemon(name, obtainType(type), health, att, def, specialAtt, def);
+				poke = new Pokemon(name, 5, 500, obtainType(type), health, att, def, specialAtt, def);
 			}
 			
 			poke.setAttacks(generatePokeMoves(poke, movesList));

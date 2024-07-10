@@ -13,7 +13,7 @@ import main.KeyHandler;
 
 public class Player extends Entity {
 
-	private GamePanel gamePanel; 
+	GamePanel gamePanel;
 	private KeyHandler keyHandler;
 	
 	public final int screenX;
@@ -26,8 +26,7 @@ public class Player extends Entity {
 		screenX = gamePanel.screenWidth / 2 - (gamePanel.scaledTileSize/2);
 		screenY = gamePanel.screenHeight / 2 - (gamePanel.scaledTileSize/2);
 		
-		solidArea = new Rectangle(4 * gamePanel.scale, 24 * gamePanel.scale, 28 * gamePanel.scale, 24 * gamePanel.scale);
-		//solidArea = new Rectangle(4, 24, 28, 24);
+		solidArea = new Rectangle(4 * gamePanel.scale, 24 * gamePanel.scale, 24 * gamePanel.scale, 20 * gamePanel.scale);
 		
 		setDefaultValues();
 		getPlayerImage();
@@ -36,8 +35,6 @@ public class Player extends Entity {
 	public void setDefaultValues() {
 		worldX_pos = 480 * gamePanel.scale;
 		worldY_pos = 220 * gamePanel.scale;
-		//worldX_pos = 0;
-		//worldY_pos = 0;
 		speed = 4;
 		direction = "down";
 	}
@@ -134,8 +131,6 @@ public class Player extends Entity {
 	}
 	
 	public void draw(Graphics2D p_g2) {
-		//p_g2.setColor(Color.BLACK);
-		//p_g2.fillRect(x_pos, y_pos, gamePanel.scaledTileSize, gamePanel.scaledTileSize); //x, y, w, h	
 		BufferedImage currentImage = null;
 		
 		switch(direction) {
@@ -202,7 +197,7 @@ public class Player extends Entity {
 
 		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.scale, 48 * gamePanel.scale, null);
 		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
-		//p_g2.fill(solidArea);
+		//p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 	}
 	
 }
