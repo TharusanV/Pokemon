@@ -17,7 +17,7 @@ public class CreateLayer {
 		this.gamePanel = p_gamePanel;
 		this.tileManager = p_tileManager;
 		
-		mapTileNum = new int[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
+		mapTileNum = new int[gamePanel.getMaxWorldCol()][gamePanel.getMaxWorldRow()];
 		
 		if(p_imageSelect == 0) {
 			tileManager.getTileImage("res/maps/palletTown_Ground.csv", false);
@@ -42,9 +42,9 @@ public class CreateLayer {
 	        int row = 0;
 	        
 	        String line;
-	        while ((line = br.readLine()) != null && row < gamePanel.maxWorldRow) {
+	        while ((line = br.readLine()) != null && row < gamePanel.getMaxWorldRow()) {
 	            String[] numbers = line.split(",");
-	            for (col = 0; col < numbers.length && col < gamePanel.maxWorldCol; col++) {
+	            for (col = 0; col < numbers.length && col < gamePanel.getMaxWorldCol(); col++) {
 	                int num = Integer.parseInt(numbers[col].trim());
 	                mapTileNum[col][row] = num;
 	            }
@@ -63,24 +63,24 @@ public class CreateLayer {
 		int worldCol = 0;
 		int worldRow = 0;
 				
-		while(worldCol < gamePanel.maxWorldCol && worldRow < gamePanel.maxWorldRow) {
+		while(worldCol < gamePanel.getMaxWorldCol() && worldRow < gamePanel.getMaxWorldRow()) {
 			
 			int tileNum = mapTileNum[worldCol][worldRow];
 			
-			int worldX = worldCol * gamePanel.scaledTileSize;
-			int worldY = worldRow * gamePanel.scaledTileSize;
-			int screenX = worldX - gamePanel.player.worldX_pos + gamePanel.player.screenX;
-			int screenY = worldY - gamePanel.player.worldY_pos + gamePanel.player.screenY;
+			int worldX = worldCol * gamePanel.getScaledTileSize();
+			int worldY = worldRow * gamePanel.getScaledTileSize();
+			int screenX = worldX - gamePanel.getPlayer().worldX_pos + gamePanel.getPlayer().screenX;
+			int screenY = worldY - gamePanel.getPlayer().worldY_pos + gamePanel.getPlayer().screenY;
 			
 			
-			if (worldX + gamePanel.scaledTileSize > gamePanel.player.worldX_pos - gamePanel.player.screenX && 
-				worldX - gamePanel.scaledTileSize < gamePanel.player.worldX_pos + gamePanel.player.screenX && 
-				worldY + gamePanel.scaledTileSize > gamePanel.player.worldY_pos - gamePanel.player.screenY && 
-				worldY - gamePanel.scaledTileSize < gamePanel.player.worldY_pos + gamePanel.player.screenY) {
+			if (worldX + gamePanel.getScaledTileSize() > gamePanel.getPlayer().worldX_pos - gamePanel.getPlayer().screenX && 
+				worldX - gamePanel.getScaledTileSize() < gamePanel.getPlayer().worldX_pos + gamePanel.getPlayer().screenX && 
+				worldY + gamePanel.getScaledTileSize() > gamePanel.getPlayer().worldY_pos - gamePanel.getPlayer().screenY && 
+				worldY - gamePanel.getScaledTileSize() < gamePanel.getPlayer().worldY_pos + gamePanel.getPlayer().screenY) {
 				
 				for (Tile tile : tileManager.allTiles) {
 					if (tile.value == tileNum) {
-			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.scaledTileSize, gamePanel.scaledTileSize, null);
+			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.getScaledTileSize(), gamePanel.getScaledTileSize(), null);
 			            break;
 			        }
 				}
@@ -88,7 +88,7 @@ public class CreateLayer {
 			
 			worldCol++;
 			
-			if(worldCol == gamePanel.maxWorldCol) {
+			if(worldCol == gamePanel.getMaxWorldCol()) {
 				worldCol = 0;
 				worldRow++;
 			}

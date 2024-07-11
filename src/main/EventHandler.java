@@ -13,12 +13,12 @@ public class EventHandler {
 	public EventHandler(GamePanel gp) {
 		this.gamePanel = gp;
 		
-		eventRect = new EventRect[gamePanel.maxWorldCol][gamePanel.maxWorldRow];
+		eventRect = new EventRect[gamePanel.getMaxWorldCol()][gamePanel.getMaxWorldRow()];
 		
 		int col = 0;
 		int row = 0;
 		
-		while(col < gamePanel.maxWorldCol && row < gamePanel.maxWorldRow) {
+		while(col < gamePanel.getMaxWorldCol() && row < gamePanel.getMaxWorldRow()) {
 		    eventRect[col][row] = new EventRect();
 		    eventRect[col][row].x = 23;
 		    eventRect[col][row].y = 23;
@@ -28,7 +28,7 @@ public class EventHandler {
 		    eventRect[col][row].eventRectDefaultY = eventRect[col][row].y;
 		    
 		    col++;
-		    if(col == gamePanel.maxWorldCol) {
+		    if(col == gamePanel.getMaxWorldCol()) {
 		        col = 0;
 		        row++;
 		    }
@@ -38,44 +38,44 @@ public class EventHandler {
 	
 	public void checkEvent() {
 		//Checks if the player is more than 1 tile away from the last even to restart it
-        int xDistance = Math.abs(gamePanel.player.worldX_pos - previousEventX);
-        int yDistance = Math.abs(gamePanel.player.worldY_pos - previousEventY);
+        int xDistance = Math.abs(gamePanel.getPlayer().worldX_pos - previousEventX);
+        int yDistance = Math.abs(gamePanel.getPlayer().worldY_pos - previousEventY);
         int distance = Math.max(xDistance, yDistance);
 
-        if (distance > gamePanel.scaledTileSize) {
+        if (distance > gamePanel.getScaledTileSize()) {
             canEventRestart = true;
         }
 		if(canEventRestart == true) {
 			if(activateEvent(10,10, "up") == true) {	
-				redoEventExample(10, 10, gamePanel.dialogueState);
+				redoEventExample(10, 10, gamePanel.getDialogueState());
 			}
 		}
         
         //For one time events
 		if(activateEvent(30,30, "up") == true) {
-			oneTimeEventExample(30, 30, gamePanel.dialogueState);
+			oneTimeEventExample(30, 30, gamePanel.getDialogueState());
 		}
 	}
 	
 	public boolean activateEvent(int col, int row, String reqDirection) {
 		boolean hit = false;
 		
-		gamePanel.player.solidArea.x = gamePanel.player.worldX_pos + gamePanel.player.solidArea.x; 
-		gamePanel.player.solidArea.y = gamePanel.player.worldY_pos + gamePanel.player.solidArea.y; 
-		eventRect[col][row].x = col*gamePanel.scaledTileSize + eventRect[col][row].x;
-		eventRect[col][row].y = row*gamePanel.scaledTileSize + eventRect[col][row].y;
+		gamePanel.getPlayer().solidArea.x = gamePanel.getPlayer().worldX_pos + gamePanel.getPlayer().solidArea.x; 
+		gamePanel.getPlayer().solidArea.y = gamePanel.getPlayer().worldY_pos + gamePanel.getPlayer().solidArea.y; 
+		eventRect[col][row].x = col*gamePanel.getScaledTileSize() + eventRect[col][row].x;
+		eventRect[col][row].y = row*gamePanel.getScaledTileSize() + eventRect[col][row].y;
 		
-		if (gamePanel.player.solidArea.intersects(eventRect[col][row]) && eventRect[col][row].eventDone == false){
-			if(gamePanel.player.direction.contentEquals(reqDirection) || reqDirection.contentEquals("any")) {
+		if (gamePanel.getPlayer().solidArea.intersects(eventRect[col][row]) && eventRect[col][row].eventDone == false){
+			if(gamePanel.getPlayer().direction.contentEquals(reqDirection) || reqDirection.contentEquals("any")) {
 				hit = true;
 				
-				previousEventX = gamePanel.player.worldX_pos; 
-				previousEventY = gamePanel.player.worldY_pos;
+				previousEventX = gamePanel.getPlayer().worldX_pos; 
+				previousEventY = gamePanel.getPlayer().worldY_pos;
 			}
 		}
 		
-		gamePanel.player.solidArea.x = gamePanel.player.solidAreaDefaultX;
-		gamePanel.player.solidArea.y = gamePanel.player.solidAreaDefaultY;
+		gamePanel.getPlayer().solidArea.x = gamePanel.getPlayer().solidAreaDefaultX;
+		gamePanel.getPlayer().solidArea.y = gamePanel.getPlayer().solidAreaDefaultY;
 		eventRect[col][row].y = eventRect[col][row].eventRectDefaultX;
 		eventRect[col][row].y = eventRect[col][row].eventRectDefaultY;
 		

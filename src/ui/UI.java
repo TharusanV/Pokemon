@@ -58,15 +58,15 @@ public class UI {
 		 */
 		
 		//Play State
-		if(gamePanel.gameState == gamePanel.playState) {
+		if(gamePanel.getGameState() == gamePanel.getPlayState()) {
 			
 		}
 		//Battle State
-		if(gamePanel.gameState == gamePanel.battleState) {
+		if(gamePanel.getGameState() == gamePanel.getBattleState()) {
 			drawBattleScreen();
 		}
 		//Dialogue State
-		if(gamePanel.gameState == gamePanel.dialogueState) {
+		if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
 			drawDialogueScreen();
 		}
 	}
@@ -78,9 +78,9 @@ public class UI {
 	public void drawDialogueScreen() {
 		//Dialogue Window
 		int x = 0;
-		int y = gamePanel.scaledTileSize / 2 + 480;
-		int width = gamePanel.screenWidth;
-		int height = gamePanel.scaledTileSize * 2;
+		int y = gamePanel.getScaledTileSize() / 2 + 480;
+		int width = gamePanel.getScreenWidth();
+		int height = gamePanel.getScaledTileSize() * 2;
 		
 		Color c = new Color(255, 255, 255);
 		g2.setColor(c);
@@ -93,8 +93,8 @@ public class UI {
 		
 		//Drawing text
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
-		x += gamePanel.scaledTileSize;
-		y += gamePanel.scaledTileSize;
+		x += gamePanel.getScaledTileSize();
+		y += gamePanel.getScaledTileSize();
 		
 		for(String line : currentDialogue.split("\n")) {
 			g2.drawString(currentDialogue, x, y);

@@ -17,7 +17,7 @@ public class Entity {
 	public int speed;
 	
 	public BufferedImage up1, up2, up3, up4, left1, left2, left3, left4, right1, right2, right3, right4, down1, down2, down3, down4;
-	public String direction;
+	public String direction = "down";
 	public int spriteCounter = 0;
 	public int spriteNum = 1;
 	
@@ -28,6 +28,11 @@ public class Entity {
 	
 	String dialogues[] = new String[20];
 	int dialogueIndex = 0;
+	
+	public BufferedImage image1, image2, image3;
+	public String name;
+	public boolean collision = false;
+	
 	
 	public Entity(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
@@ -65,10 +70,10 @@ public class Entity {
 		if(dialogues[dialogueIndex] == null) {
 			dialogueIndex = 0;
 		}
-		gamePanel.ui.currentDialogue = dialogues[dialogueIndex];
+		gamePanel.getUi().currentDialogue = dialogues[dialogueIndex];
 		dialogueIndex++;
 		
-		switch(gamePanel.player.direction) {
+		switch(gamePanel.getPlayer().direction) {
 		case "up":
 			direction = "down";
 			break;
@@ -89,9 +94,11 @@ public class Entity {
 		setAction();
 		
 		collisionOn = false;
-		gamePanel.collisionChecker.checkTile(this);
-		gamePanel.collisionChecker.checkObject(this, false);
-		gamePanel.collisionChecker.checkPlayer(this);
+		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
+		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
+		gamePanel.getCollisionChecker().checkObject(this, false);
+		gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
+		gamePanel.getCollisionChecker().checkPlayer(this);
 		
 		if(collisionOn == false) {
 			switch(direction) {
@@ -131,13 +138,13 @@ public class Entity {
 	
 	public void draw(Graphics2D g2) {
 		BufferedImage currentImage = null;
-		int screenX = worldX_pos - gamePanel.player.worldX_pos + gamePanel.player.screenX;
-		int screenY = worldY_pos - gamePanel.player.worldY_pos + gamePanel.player.screenY;
+		int screenX = worldX_pos - gamePanel.getPlayer().worldX_pos + gamePanel.getPlayer().screenX;
+		int screenY = worldY_pos - gamePanel.getPlayer().worldY_pos + gamePanel.getPlayer().screenY;
 		
-		if (worldX_pos + gamePanel.scaledTileSize > gamePanel.player.worldX_pos - gamePanel.player.screenX && 
-			worldX_pos - gamePanel.scaledTileSize < gamePanel.player.worldX_pos + gamePanel.player.screenX && 
-			worldY_pos + gamePanel.scaledTileSize > gamePanel.player.worldY_pos - gamePanel.player.screenY && 
-			worldY_pos - gamePanel.scaledTileSize < gamePanel.player.worldY_pos + gamePanel.player.screenY) {
+		if (worldX_pos + gamePanel.getScaledTileSize() > gamePanel.getPlayer().worldX_pos - gamePanel.getPlayer().screenX && 
+			worldX_pos - gamePanel.getScaledTileSize() < gamePanel.getPlayer().worldX_pos + gamePanel.getPlayer().screenX && 
+			worldY_pos + gamePanel.getScaledTileSize() > gamePanel.getPlayer().worldY_pos - gamePanel.getPlayer().screenY && 
+			worldY_pos - gamePanel.getScaledTileSize() < gamePanel.getPlayer().worldY_pos + gamePanel.getPlayer().screenY) {
 			
 			
 			switch(direction) {

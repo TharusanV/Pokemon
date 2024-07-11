@@ -10,7 +10,7 @@ public class NPC extends Entity{
 	public NPC(GamePanel gamePanel, String character) {
 		super(gamePanel);
 		
-		solidArea = new Rectangle(0, 0, 32 * gamePanel.scale, 48 * gamePanel.scale);
+		solidArea = new Rectangle(0, 0, 32 * gamePanel.getScale(), 48 * gamePanel.getScale());
 		solidAreaDefaultX = solidArea.x;
 		solidAreaDefaultY = solidArea.y;
 		

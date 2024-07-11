@@ -23,10 +23,10 @@ public class Player extends Entity {
 		
 		this.keyHandler = p_keyHandler;
 		
-		screenX = gamePanel.screenWidth / 2 - (gamePanel.scaledTileSize/2);
-		screenY = gamePanel.screenHeight / 2 - (gamePanel.scaledTileSize/2);
+		screenX = gamePanel.getScreenWidth() / 2 - (gamePanel.getScaledTileSize()/2);
+		screenY = gamePanel.getScreenHeight() / 2 - (gamePanel.getScaledTileSize()/2);
 		
-		solidArea = new Rectangle(4 * gamePanel.scale, 24 * gamePanel.scale, 24 * gamePanel.scale, 20 * gamePanel.scale);
+		solidArea = new Rectangle(4 * gamePanel.getScale(), 24 * gamePanel.getScale(), 24 * gamePanel.getScale(), 20 * gamePanel.getScale());
 		solidAreaDefaultX = solidArea.x;
 		solidAreaDefaultY = solidArea.y;
 		
@@ -36,14 +36,14 @@ public class Player extends Entity {
 	}
 	
 	public void setDefaultValues() {
-		worldX_pos = 480 * gamePanel.scale;
-		worldY_pos = 220 * gamePanel.scale;
+		worldX_pos = 480 * gamePanel.getScale();
+		worldY_pos = 220 * gamePanel.getScale();
 		speed = 4;
 		direction = "down";
 	}	
 	
 	public void update() {
-		if(keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed) {
+		if(keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed || keyHandler.enterPressed) {
 			//Set direction
 			if(keyHandler.upPressed) {
 				direction = "up";
@@ -60,35 +60,29 @@ public class Player extends Entity {
 			
 			//Check tile collision for movement
 			collisionOn = false;
-			gamePanel.collisionChecker.checkTile(this);
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
 			//Check object collision
-			int objIndex = gamePanel.collisionChecker.checkObject(this, true);
+			int objIndex = gamePanel.getCollisionChecker().checkObject(this, true);
 			pickUpObject(objIndex);
 			//Check NPC collision
-			int npcIndex = gamePanel.collisionChecker.checkEntity(this, gamePanel.npc);
+			int npcIndex = gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
 			interactNPC(npcIndex);
 			//Check Event
-			gamePanel.eventHandler.checkEvent();
+			gamePanel.getEventHandler().checkEvent();
 			
-			gamePanel.keyHandler.enterPressed = false;
 			
-			if(collisionOn == false) {
+			
+			if(collisionOn == false && keyHandler.enterPressed == false) {
 				switch(direction) {
-				case "up":
-					worldY_pos -= speed;
-					break;
-				case "down":
-					worldY_pos += speed;
-					break;
-				case "left":
-					worldX_pos -= speed;
-					break;
-				case "right":
-					worldX_pos += speed;
-					break;
+				case "up":worldY_pos -= speed;break;
+				case "down":worldY_pos += speed;break;
+				case "left":worldX_pos -= speed;break;
+				case "right":worldX_pos += speed;break;
 				}
 			}
 			
+			gamePanel.getKeyHandler().enterPressed = false;
 			//Animation
 			spriteCounter++;
 			if(spriteCounter > 10) {
@@ -115,11 +109,11 @@ public class Player extends Entity {
 	public void pickUpObject(int i) {
 		if(i != 999) {
 			//Do something when on object
-			String objectName = gamePanel.obj[i].name;
+			String objectName = gamePanel.getObj()[i].name;
 			
 			switch(objectName) {
 			case "Door":
-				gamePanel.ui.showMessage("Testing");
+				gamePanel.getUi().showMessage("Testing");
 			case "Pokeball":
 				
 			}
@@ -129,9 +123,9 @@ public class Player extends Entity {
 	
 	public void interactNPC(int i) {
 		if(i != 999) {
-			if(gamePanel.keyHandler.enterPressed) {
-				gamePanel.gameState = gamePanel.dialogueState;
-				gamePanel.npc[i].startSpeaking();
+			if(gamePanel.getKeyHandler().enterPressed) {
+				gamePanel.setGameState(gamePanel.getDialogueState());
+				gamePanel.getNpc()[i].startSpeaking();
 			}
 		}
 	}
@@ -201,7 +195,7 @@ public class Player extends Entity {
 	        break;
 		}
 
-		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.scale, 48 * gamePanel.scale, null);
+		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.getScale(), 48 * gamePanel.getScale(), null);
 		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
 		p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 	}
