@@ -24,7 +24,7 @@ public class CreateLayer {
 			loadMap("/maps/palletTown_Ground.csv");
 		}
 		else if(p_imageSelect == 1) {
-			tileManager.getTileImage("res/maps/palletTown_Tree.csv", false);
+			tileManager.getTileImage("res/maps/palletTown_Tree.csv", true);
 			loadMap("/maps/palletTown_Tree.csv");
 		}
 		else if(p_imageSelect == 2) {

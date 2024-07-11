@@ -3,7 +3,10 @@ package ui;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.InputStream;
 
 import main.GamePanel;
 
@@ -11,7 +14,7 @@ public class UI {
 	
 	GamePanel gamePanel;
 	Graphics2D g2;
-	Font arial_40;
+	Font pokeFont;
 	public boolean messageOn = false;
 	public String message = "";
 	int messageCounter = 0;
@@ -19,8 +22,15 @@ public class UI {
 	
 	public UI(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
-		arial_40 = new Font("Arial", Font.BOLD, 36);
 		
+		try {
+			InputStream is = getClass().getResourceAsStream("/font/PKMN RBYGSC.ttf");
+			pokeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void showMessage(String text) {
@@ -31,7 +41,7 @@ public class UI {
 	public void draw(Graphics2D g2) {
 		this.g2 = g2;
 		
-		g2.setFont(arial_40);
+		g2.setFont(pokeFont);
 		g2.setColor(Color.BLACK);
 		
 		/*
@@ -82,6 +92,7 @@ public class UI {
 		g2.drawRoundRect(x + 2, y + 2, width - 5, height - 4, 25, 25);
 		
 		//Drawing text
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
 		x += gamePanel.scaledTileSize;
 		y += gamePanel.scaledTileSize;
 		

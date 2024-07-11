@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import main.GamePanel;
-import main.KeyHandler;
+import utility.KeyHandler;
 
 public class Player extends Entity {
 
@@ -67,6 +67,10 @@ public class Player extends Entity {
 			//Check NPC collision
 			int npcIndex = gamePanel.collisionChecker.checkEntity(this, gamePanel.npc);
 			interactNPC(npcIndex);
+			//Check Event
+			gamePanel.eventHandler.checkEvent();
+			
+			gamePanel.keyHandler.enterPressed = false;
 			
 			if(collisionOn == false) {
 				switch(direction) {
@@ -129,8 +133,6 @@ public class Player extends Entity {
 				gamePanel.gameState = gamePanel.dialogueState;
 				gamePanel.npc[i].startSpeaking();
 			}
-			
-			gamePanel.keyHandler.enterPressed = false;
 		}
 	}
 	

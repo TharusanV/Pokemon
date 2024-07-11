@@ -13,6 +13,7 @@ import object.SuperObject;
 import tile.CreateLayer;
 import tile.TileManager;
 import ui.UI;
+import utility.KeyHandler;
 
 //The painting
 public class GamePanel extends JPanel implements Runnable {
@@ -45,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker collisionChecker = new CollisionChecker(this);
 	public AssetSetter assetSetter = new AssetSetter(this);
 	public UI ui = new UI(this);
+	public EventHandler eventHandler = new EventHandler(this);
 	
 	public Player player = new Player(this, keyHandler);
 	

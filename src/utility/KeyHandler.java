@@ -1,7 +1,9 @@
-package main;
+package utility;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import main.GamePanel;
 
 public class KeyHandler implements KeyListener {
 
