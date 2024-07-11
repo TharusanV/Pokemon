@@ -18,6 +18,7 @@ public class NPC extends Entity{
 		direction = "down";
 		
 		getCharacterImage(character);
+		setDialogue();
 		
 	}
 	
@@ -45,6 +46,16 @@ public class NPC extends Entity{
 			actionCooldownCounter = 0;
 		}
 		
+	}
+	
+	public void setDialogue() {
+		dialogues[0] = "Big Duck";
+	}
+	
+	public void startSpeaking() {
+		//Do NPC stuff
+		
+		super.startSpeaking();
 	}
 	
 

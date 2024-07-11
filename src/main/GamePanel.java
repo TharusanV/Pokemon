@@ -12,7 +12,7 @@ import entity.Player;
 import object.SuperObject;
 import tile.CreateLayer;
 import tile.TileManager;
-import ui.BaseUI;
+import ui.UI;
 
 //The painting
 public class GamePanel extends JPanel implements Runnable {
@@ -41,11 +41,13 @@ public class GamePanel extends JPanel implements Runnable {
 	CreateLayer layer3 = new CreateLayer(this, tileManager, 2);
 	
 	
-	KeyHandler keyHandler = new KeyHandler(this);
+	public KeyHandler keyHandler = new KeyHandler(this);
 	public CollisionChecker collisionChecker = new CollisionChecker(this);
 	public AssetSetter assetSetter = new AssetSetter(this);
-	public BaseUI ui = new BaseUI(this);
+	public UI ui = new UI(this);
+	
 	public Player player = new Player(this, keyHandler);
+	
 	public SuperObject obj[] = new SuperObject[10];
 	public Entity npc[] = new Entity[10];
 	
@@ -53,6 +55,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public int gameState;
 	public final int playState = 1;
 	public final int battleState = 2;
+	public final int dialogueState = 3;
 	
 	Thread gameThread;
 	
@@ -113,7 +116,12 @@ public class GamePanel extends JPanel implements Runnable {
 				}
 			}
 		}
+		
 		if(gameState == battleState) {
+			
+		}
+		
+		if(gameState == dialogueState) {
 			
 		}
 	}
