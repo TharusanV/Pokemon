@@ -113,7 +113,7 @@ public class Player extends Entity {
 			
 			switch(objectName) {
 			case "Door":
-				gamePanel.getUi().showMessage("Testing");
+				gamePanel.getDialogueUi().showMessage("Testing");
 			case "Pokeball":
 				
 			}

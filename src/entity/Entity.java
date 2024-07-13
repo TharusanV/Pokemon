@@ -70,7 +70,7 @@ public class Entity {
 		if(dialogues[dialogueIndex] == null) {
 			dialogueIndex = 0;
 		}
-		gamePanel.getUi().currentDialogue = dialogues[dialogueIndex];
+		gamePanel.getDialogueUi().currentDialogue = dialogues[dialogueIndex];
 		dialogueIndex++;
 		
 		switch(gamePanel.getPlayer().direction) {

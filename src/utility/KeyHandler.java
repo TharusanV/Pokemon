@@ -28,6 +28,7 @@ public class KeyHandler implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		int keyValue = e.getKeyCode();
 		
+		//PLAY STATE
 		if(gamePanel.getGameState() == gamePanel.getPlayState()) {
 			if(keyValue == KeyEvent.VK_W) {
 				upPressed = true;
@@ -44,9 +45,16 @@ public class KeyHandler implements KeyListener {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				enterPressed = true;
 			}
+			if(keyValue == KeyEvent.VK_Z) {
+				gamePanel.setGameState(gamePanel.getBattleState());
+			}
 		}
 		
+		//BATTLE STATE
 		else if(gamePanel.getGameState() == gamePanel.getBattleState()) {
+			if(keyValue == KeyEvent.VK_ENTER) {
+				
+			}
 			if(keyValue == KeyEvent.VK_W) {
 			
 			}
@@ -59,8 +67,12 @@ public class KeyHandler implements KeyListener {
 			if(keyValue == KeyEvent.VK_D) {
 			
 			}
+			if(keyValue == KeyEvent.VK_Z) {
+				gamePanel.setGameState(gamePanel.getPlayState());
+			}
 		}
 		
+		//DIALOGUE STATE
 		else if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				gamePanel.setGameState(gamePanel.getPlayState());

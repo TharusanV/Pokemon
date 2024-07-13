@@ -14,8 +14,10 @@ import entity.Entity;
 import entity.Player;
 import tile.CreateLayer;
 import tile.TileManager;
-import ui.UI;
+import ui.BattleUI;
+import ui.DialogueUI;
 import utility.KeyHandler;
+import utility.UtilityTool;
 
 //The painting
 public class GamePanel extends JPanel implements Runnable {
@@ -24,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
 	final int originalTileSize = 32;
 	final int scale = 2;
 	private final int scaledTileSize = originalTileSize * scale;
-	private final int maxScreenCol = 24;
+	private final int maxScreenCol = 25;
 	private final int maxScreenRow = 20;
 	private final int screenWidth = originalTileSize * maxScreenCol;
 	private final int screenHeight = originalTileSize * maxScreenRow;
@@ -47,8 +49,10 @@ public class GamePanel extends JPanel implements Runnable {
 	private final KeyHandler keyHandler = new KeyHandler(this);
 	private final CollisionChecker collisionChecker = new CollisionChecker(this);
 	private final AssetSetter assetSetter = new AssetSetter(this);
-	private final UI ui = new UI(this);
+	private final BattleUI battleUI = new BattleUI(this);
+	private final DialogueUI dialogueUI = new DialogueUI(this);
 	private final EventHandler eventHandler = new EventHandler(this);
+	private final UtilityTool utilityTool = new UtilityTool();
 	
 	private final Player player = new Player(this, keyHandler);
 	private final Entity obj[] = new Entity[10];
@@ -99,13 +103,10 @@ public class GamePanel extends JPanel implements Runnable {
 			if(delta >= 1) {
 				//Update
 				update();
-				
 				//Draw
 				repaint(); //Will call the paintComponent()
-				
 				delta--;
 			}
-
 		}	
 	}
 	
@@ -169,8 +170,13 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		entityList.clear();
 		
-		//UI draw
-		ui.draw(g2);
+		//UI drawings based on states
+		if(gameState == battleState) {
+			battleUI.draw(g2);
+		}
+		if(gameState == dialogueState) {
+			dialogueUI.draw(g2);
+		}
 		
 		g2.dispose(); //Save memory after the drawing is created
 	}
@@ -263,12 +269,20 @@ public class GamePanel extends JPanel implements Runnable {
 		return assetSetter;
 	}
 
-	public UI getUi() {
-		return ui;
+	public BattleUI getBattleUi() {
+		return battleUI;
+	}
+	
+	public DialogueUI getDialogueUi() {
+		return dialogueUI;
 	}
 
 	public EventHandler getEventHandler() {
 		return eventHandler;
+	}
+	
+	public UtilityTool getUtilityTool() {
+		return utilityTool;
 	}
 	
 	//ALL SETTERS & GETTERS	- P6
