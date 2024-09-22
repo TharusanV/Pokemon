@@ -45,6 +45,8 @@ public class KeyHandler implements KeyListener {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				enterPressed = true;
 			}
+			
+			//TESTING BATTLE PLEASE REMOVE LATER
 			if(keyValue == KeyEvent.VK_Z) {
 				gamePanel.setGameState(gamePanel.getBattleState());
 			}
@@ -53,7 +55,7 @@ public class KeyHandler implements KeyListener {
 		//BATTLE STATE
 		else if(gamePanel.getGameState() == gamePanel.getBattleState()) {
 			if(keyValue == KeyEvent.VK_ENTER) {
-				
+				enterPressed = true;
 			}
 			if(keyValue == KeyEvent.VK_W) {
 			
@@ -69,13 +71,15 @@ public class KeyHandler implements KeyListener {
 			}
 			if(keyValue == KeyEvent.VK_Z) {
 				gamePanel.setGameState(gamePanel.getPlayState());
+				gamePanel.getBattleUi().resetValues();
 			}
 		}
 		
 		//DIALOGUE STATE
 		else if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
 			if(keyValue == KeyEvent.VK_ENTER) {
-				gamePanel.setGameState(gamePanel.getPlayState());
+				//gamePanel.setGameState(gamePanel.getPlayState());
+				enterPressed = true;
 			}
 		}
 	}

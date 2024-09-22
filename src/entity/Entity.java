@@ -26,8 +26,9 @@ public class Entity {
 	public boolean collisionOn = false;
 	public int actionCooldownCounter = 0;
 	
-	String dialogues[] = new String[20];
-	int dialogueIndex = 0;
+	public String dialogues[][] = new String[20][20];
+	public int dialogueSet = 0;
+	public int dialogueIndex = 0;
 	
 	public BufferedImage image1, image2, image3;
 	public String name;
@@ -38,27 +39,27 @@ public class Entity {
 		this.gamePanel = gamePanel;
 	}
 	
-	public void getCharacterImage(String character) {
+	public void getCharacterImage(String folderName, String character) {
 		try {
-			up1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_up_1.png"));
-			up2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_up_2.png"));
-			up3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_up_3.png"));
-			up4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_up_4.png"));
+			up1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_1.png"));
+			up2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_2.png"));
+			up3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_3.png"));
+			up4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_4.png"));
 
-			down1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_down_1.png"));
-			down2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_down_2.png"));
-			down3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_down_3.png"));
-			down4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_down_4.png"));
+			down1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_1.png"));
+			down2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_2.png"));
+			down3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_3.png"));
+			down4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_4.png"));
 
-			left1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_left_1.png"));
-			left2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_left_2.png"));
-			left3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_left_3.png"));
-			left4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_left_4.png"));
+			left1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_1.png"));
+			left2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_2.png"));
+			left3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_3.png"));
+			left4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_4.png"));
 
-			right1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_right_1.png"));
-			right2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_right_2.png"));
-			right3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_right_3.png"));
-			right4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+character+"_right_4.png"));
+			right1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_1.png"));
+			right2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_2.png"));
+			right3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_3.png"));
+			right4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_4.png"));
 			
 		}catch(IOException e){
 			e.printStackTrace();
@@ -66,13 +67,18 @@ public class Entity {
 	}
 
 	public void setAction() {}
-	public void startSpeaking() {
+	
+	public void speak() {
+		/*
 		if(dialogues[dialogueIndex] == null) {
 			dialogueIndex = 0;
 		}
 		gamePanel.getDialogueUi().currentDialogue = dialogues[dialogueIndex];
 		dialogueIndex++;
-		
+		*/
+	}
+	
+	public void facePlayer() {
 		switch(gamePanel.getPlayer().direction) {
 		case "up":
 			direction = "down";
@@ -88,6 +94,14 @@ public class Entity {
 			break;
 		}
 	}
+	
+	public void startDialogue(Entity entity, int setNum) {
+		gamePanel.setGameState(gamePanel.getDialogueState());
+		gamePanel.getDialogueUi().npc = entity;
+		dialogueSet = setNum;
+		
+	}
+	
 	
 	
 	public void update() {

@@ -37,7 +37,7 @@ public class EventHandler {
 	}
 	
 	public void checkEvent() {
-		//Checks if the player is more than 1 tile away from the last even to restart it
+		//Checks if the player is more than 1 tile away from the last event to restart it
         int xDistance = Math.abs(gamePanel.getPlayer().worldX_pos - previousEventX);
         int yDistance = Math.abs(gamePanel.getPlayer().worldY_pos - previousEventY);
         int distance = Math.max(xDistance, yDistance);

@@ -31,7 +31,7 @@ public class Player extends Entity {
 		solidAreaDefaultY = solidArea.y;
 		
 		setDefaultValues();
-		getCharacterImage("player");
+		getCharacterImage("PlayerCharacter", "player");
 		
 	}
 	
@@ -82,7 +82,9 @@ public class Player extends Entity {
 				}
 			}
 			
+			
 			gamePanel.getKeyHandler().enterPressed = false;
+			
 			//Animation
 			spriteCounter++;
 			if(spriteCounter > 10) {
@@ -124,8 +126,7 @@ public class Player extends Entity {
 	public void interactNPC(int i) {
 		if(i != 999) {
 			if(gamePanel.getKeyHandler().enterPressed) {
-				gamePanel.setGameState(gamePanel.getDialogueState());
-				gamePanel.getNpc()[i].startSpeaking();
+				gamePanel.getNpc()[i].speak();
 			}
 		}
 	}
@@ -197,7 +198,7 @@ public class Player extends Entity {
 
 		p_g2.drawImage(currentImage, screenX, screenY, 32 * gamePanel.getScale(), 48 * gamePanel.getScale(), null);
 		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
-		p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+		//p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 	}
 	
 }

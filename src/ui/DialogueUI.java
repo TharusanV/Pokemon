@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import entity.Entity;
 import main.GamePanel;
 
 public class DialogueUI {
@@ -23,6 +24,13 @@ public class DialogueUI {
 	int messageCounter = 0;
 	public String currentDialogue = "";
 	BufferedImage textBox;
+	int charIndex = 0;
+	String combinedText = "";
+	
+	public Entity npc;
+	
+	
+	
 	
 	public DialogueUI(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
@@ -78,8 +86,41 @@ public class DialogueUI {
 		x += gamePanel.getScaledTileSize();
 		y += gamePanel.getScaledTileSize();
 		
+		
+		if(npc.dialogues[npc.dialogueSet][npc.dialogueIndex] != null) {
+			//currentDialogue = npc.dialogues[npc.dialogueSet][npc.dialogueIndex];
+			
+			//Text letter by letter
+			char characters[] = npc.dialogues[npc.dialogueSet][npc.dialogueIndex].toCharArray();
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
+			
+			
+			if(gamePanel.getKeyHandler().enterPressed == true) {
+				charIndex = 0;
+				combinedText = "";
+				
+				if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
+					npc.dialogueIndex++;
+					gamePanel.getKeyHandler().enterPressed = false;
+				}
+			}
+		}
+		else { //If no text in the array
+			npc.dialogueIndex = 0;
+			
+			if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
+				gamePanel.setGameState(gamePanel.getPlayState());
+			}
+		}
+		
+		
 		for(String line : currentDialogue.split("\n")) {
-			g2.drawString(currentDialogue, x, y);
+			g2.drawString(line, x, y);
 			y+= 40;
 		}
 		

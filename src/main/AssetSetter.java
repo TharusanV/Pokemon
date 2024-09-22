@@ -20,7 +20,7 @@ public class AssetSetter {
 	}
 	
 	public void setNPC() {
-		gamePanel.getNpc()[0] = new NPC(gamePanel, "NPC_06");
+		gamePanel.getNpc()[0] = new NPC(gamePanel, "FatGuy", "NPC_06");
 		gamePanel.getNpc()[0].worldX_pos = 600 * gamePanel.scale;
 		gamePanel.getNpc()[0].worldY_pos = 645 * gamePanel.scale;
 	}

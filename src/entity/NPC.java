@@ -7,7 +7,7 @@ import main.GamePanel;
 
 public class NPC extends Entity{
 
-	public NPC(GamePanel gamePanel, String character) {
+	public NPC(GamePanel gamePanel, String folderName, String character) {
 		super(gamePanel);
 		
 		solidArea = new Rectangle(0, 0, 32 * gamePanel.getScale(), 48 * gamePanel.getScale());
@@ -16,17 +16,17 @@ public class NPC extends Entity{
 		
 		speed = 1;
 		direction = "down";
+		dialogueSet = -1;
 		
-		getCharacterImage(character);
+		getCharacterImage(folderName, character);
 		setDialogue();
-		
 	}
 	
 	public void setAction() {
 		Random random = new Random();
 		actionCooldownCounter++;
 		
-		if(actionCooldownCounter == 120) {
+		if(actionCooldownCounter == 180) {
 			int i = random.nextInt(100) + 1;
 			
 			if(i <= 25) {
@@ -49,13 +49,21 @@ public class NPC extends Entity{
 	}
 	
 	public void setDialogue() {
-		dialogues[0] = "Big Duck";
+		dialogues[0][0] = "Big Duck";
+		dialogues[0][1] = "Big Duck2";
 	}
 	
-	public void startSpeaking() {
+	public void speak() {
 		//Do NPC stuff
-		
-		super.startSpeaking();
+		facePlayer();
+		startDialogue(this, dialogueSet);
+	
+		//This code can be removed and changed to fit a certain condition like maybe after a battle switch the dialogue set
+		dialogueSet++;
+		if(dialogues[dialogueSet][0] == null) {
+			dialogueSet = 0; //Reset Dialogue
+			//dialogueSet--; //Play last Dialogue set
+		}
 	}
 	
 
