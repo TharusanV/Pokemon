@@ -34,6 +34,8 @@ public class Entity {
 	public String name;
 	public boolean collision = false;
 	
+	public boolean canMove = true;
+	
 	
 	public Entity(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
@@ -224,7 +226,7 @@ public class Entity {
 			}
 			
 			g2.drawImage(currentImage, screenX, screenY, 32 * 2, 48 * 2, null);
-			g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
+			//g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 		}
 	}
 	

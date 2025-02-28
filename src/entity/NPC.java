@@ -6,11 +6,13 @@ import java.util.Random;
 import main.GamePanel;
 
 public class NPC extends Entity{
-
+	
+	
+	
 	public NPC(GamePanel gamePanel, String folderName, String character) {
 		super(gamePanel);
 		
-		solidArea = new Rectangle(0, 0, 32 * gamePanel.getScale(), 48 * gamePanel.getScale());
+		solidArea = new Rectangle(0, 12, 32 * gamePanel.getScale(), 36 * gamePanel.getScale());
 		solidAreaDefaultX = solidArea.x;
 		solidAreaDefaultY = solidArea.y;
 		
@@ -20,6 +22,51 @@ public class NPC extends Entity{
 		
 		getCharacterImage(folderName, character);
 		setDialogue();
+	}
+	
+	public void update() {
+		setAction();
+		
+		if(canMove) {
+			collisionOn = false;
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
+			gamePanel.getCollisionChecker().checkObject(this, false);
+			gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
+			gamePanel.getCollisionChecker().checkPlayer(this);
+			
+			if(collisionOn == false) {
+				switch(direction) {
+				case "up": worldY_pos -= speed; break;
+				case "down": worldY_pos += speed; break;
+				case "left": worldX_pos -= speed; break;
+				case "right": worldX_pos += speed; break;
+				}
+			}
+			
+			//Animation
+			spriteCounter++;
+			if(spriteCounter > 10) {
+				if(spriteNum == 1) {
+					spriteNum = 2;
+				}
+				else if(spriteNum == 2) {
+					spriteNum = 3;
+				}
+				else if(spriteNum == 3) {
+					spriteNum = 4;
+				}
+				else if(spriteNum == 4) {
+					spriteNum = 1;
+				}
+				spriteCounter = 0;
+			}
+		}
+		else {
+			spriteNum = 1;
+		}
+		
+		
 	}
 	
 	public void setAction() {
@@ -46,11 +93,18 @@ public class NPC extends Entity{
 			actionCooldownCounter = 0;
 		}
 		
+		if(actionCooldownCounter >0 && actionCooldownCounter <= 120) {
+			canMove = true;
+		}
+		else {
+			canMove = false;
+		}
+		
 	}
 	
 	public void setDialogue() {
-		dialogues[0][0] = "Big Duck";
-		dialogues[0][1] = "Big Duck2";
+		dialogues[0][0] = "Bill: I  heard  that  Tharusan  guy  \nis  a  decent  programmer.";
+		dialogues[0][1] = "Bill: Have  Fun!";
 	}
 	
 	public void speak() {

@@ -57,18 +57,39 @@ public class KeyHandler implements KeyListener {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				enterPressed = true;
 			}
-			if(keyValue == KeyEvent.VK_W) {
+			else if(keyValue == KeyEvent.VK_W) {
+				if(gamePanel.getBattleUi().currentCommand == "Pokemon") {
+					gamePanel.getBattleUi().currentCommand = "Fight";
+				}
+				if(gamePanel.getBattleUi().currentCommand == "Run") {
+					gamePanel.getBattleUi().currentCommand = "Bag";
+				}
+			}
+			else if(keyValue == KeyEvent.VK_A) {
+				if(gamePanel.getBattleUi().currentCommand == "Bag") {
+					gamePanel.getBattleUi().currentCommand = "Fight";
+				}
+				if(gamePanel.getBattleUi().currentCommand == "Run") {
+					gamePanel.getBattleUi().currentCommand = "Pokemon";
+				}
+			}
+			else if(keyValue == KeyEvent.VK_S) {
+				if(gamePanel.getBattleUi().currentCommand == "Fight") {
+					gamePanel.getBattleUi().currentCommand = "Pokemon";
+				}
+				if(gamePanel.getBattleUi().currentCommand == "Bag") {
+					gamePanel.getBattleUi().currentCommand = "Run";
+				}
+			}
+			else if(keyValue == KeyEvent.VK_D) {
+				if(gamePanel.getBattleUi().currentCommand == "Fight") {
+					gamePanel.getBattleUi().currentCommand = "Bag";
+				}
+				if(gamePanel.getBattleUi().currentCommand == "Pokemon") {
+					gamePanel.getBattleUi().currentCommand = "Run";
+				}
+			}
 			
-			}
-			if(keyValue == KeyEvent.VK_A) {
-				
-			}
-			if(keyValue == KeyEvent.VK_S) {
-				
-			}
-			if(keyValue == KeyEvent.VK_D) {
-			
-			}
 			if(keyValue == KeyEvent.VK_Z) {
 				gamePanel.setGameState(gamePanel.getPlayState());
 				gamePanel.getBattleUi().resetValues();

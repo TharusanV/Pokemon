@@ -13,7 +13,7 @@ public class GameWindow {
 
 		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jFrame.setResizable(false);
-		jFrame.setTitle("Pokemon");
+		jFrame.setTitle("Pokemon - Tharusan.V");
 		
 		jFrame.add(p_gamePanel);
 		jFrame.pack(); //Will resize the frame to match the size of the panel

@@ -26,7 +26,9 @@ public class BattleUI {
 	
 	int battleCounter = 0;
 	
-	//Battle Start Intro
+	////Note that the top left is (0,0)
+	
+	//Battle Start
 	BufferedImage playerBarIcon, rivalBarIcon;
 	BufferedImage playerBarIconSilhouette, rivalBarIconSilhouette;
 	BufferedImage playerBar, rivalBar;
@@ -58,10 +60,11 @@ public class BattleUI {
 	int opponentFrontX = -400;
 	
 	//Battle
-	BufferedImage textbox, battleOverlay, battleOverlayTextbox;
+	BufferedImage textbox, battleOverlay, battleOverlayTextbox, battleOverlayFight;
 	BufferedImage fightCommand, bagCommand, pokemonCommand, runCommand, cancelCommand;
 	BufferedImage fightCommandSelected, bagCommandSelected, pokemonCommandSelected, runCommandSelected, cancelCommandSelected;
-	int commandWidth = 200;
+	
+	int commandWidth = SCREEN_WIDTH / 4;
 	int commandHeight = 60;
 	int fightCommandX = 400;
 	int fightCommandY = 522;
@@ -72,13 +75,47 @@ public class BattleUI {
 	int runCommandX = fightCommandX + commandWidth - 7;
 	int runCommandY = fightCommandY + commandHeight - 6;
 	
+	
+	public String currentCommand = "Fight";
+	boolean commandsBoolean = true;
+	boolean fightBoolean = false;
+	boolean bagBoolean = false;
+	boolean pokemonBoolean = false;
+	boolean runBoolean = false;
+	
+	//Pokemon (testing)
+	BufferedImage charizardFront, pikachuBack;
+	
+	//Dialogue
 	Font pokeFont;
+	Font battlePPFont;
 	public String currentDialogue = "";
 	int charIndex = 0;
 	String combinedText = "";
 	
+	//Type icons
+	BufferedImage fireTypeIcon;
+	BufferedImage waterTypeIcon;
+	BufferedImage grassTypeIcon;
+	BufferedImage electricTypeIcon;
+	BufferedImage iceTypeIcon;
+	BufferedImage fightingTypeIcon;
+	BufferedImage poisonTypeIcon;
+	BufferedImage groundTypeIcon;
+	BufferedImage flyingTypeIcon;
+	BufferedImage psychicTypeIcon;
+	BufferedImage bugTypeIcon;
+	BufferedImage rockTypeIcon;
+	BufferedImage ghostTypeIcon;
+	BufferedImage dragonTypeIcon;
+	BufferedImage darkTypeIcon;
+	BufferedImage steelTypeIcon;
+	BufferedImage fairyTypeIcon;
+	BufferedImage normalTypeIcon;
+
 	
 	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public BattleUI(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
@@ -91,12 +128,7 @@ public class BattleUI {
 	}
 	
 
-    
-    
-    public void drawSubWindow(int x, int y, int width, int height, Color color) {
-        g2.setColor(color);
-        g2.fillRect(x, y, width, height);
-    }
+
     
     
 	public void draw(Graphics2D g2) {
@@ -107,7 +139,7 @@ public class BattleUI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 24F));
 	
 		if(battleIntroTransition) {
-			startBattleIntro(); 
+			startBattle(); 
 		}
 		if(battleStartIntro) {
 			battleIntro();
@@ -120,7 +152,7 @@ public class BattleUI {
 	}
 	
 	
-	public void startBattleIntro() {
+	public void startBattle() {
 		Color c = new Color(0, 0, 0, 100);
 		
 		drawSubWindow(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, c);
@@ -236,7 +268,6 @@ public class BattleUI {
 	
 	}
 	
-	
 	public void throwPokemon() {
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
 		
@@ -276,14 +307,82 @@ public class BattleUI {
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
 		
+		g2.drawImage(pikachuBack, playerBackX, 296, 240, 240, null);
+		g2.drawImage(charizardFront, opponentFrontX+35, 120, 192, 192, null);
+		
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
 		//Battle commands
-		g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
-		g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
-		g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
-		g2.drawImage(fightCommandSelected, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
+		if(gamePanel.getKeyHandler().enterPressed == true) {
+			commandsBoolean = !commandsBoolean;
+			fightBoolean = !fightBoolean;
+			gamePanel.getKeyHandler().enterPressed = false;
+		}
+		
+		
+		if(commandsBoolean == true) {
+			battleShowCommands();
+		}
+		if(fightBoolean == true) {
+			fightShowMoves();
+		}
+		
+
+	}
+	
+	
+	public void battleShowCommands() {
+		if(currentCommand == "Fight") {
+			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(fightCommandSelected, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
+		}
+		else if(currentCommand == "Bag") {
+			g2.drawImage(bagCommandSelected, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
+		}
+		else if(currentCommand == "Pokemon") {
+			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(pokemonCommandSelected, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
+		}	
+		else if(currentCommand == "Run"){
+			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(runCommandSelected, runCommandX, runCommandY, commandWidth, commandHeight, null);
+			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
+		}
+	}
+	
+	public void fightShowMoves() {
+		g2.drawImage(battleOverlayFight, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+
+		g2.setColor(Color.WHITE);
+		g2.fillRect(60, 531, 190, 39); //Top left
+		g2.fillRect(360, 531, 190, 39); //Top right
+		g2.fillRect(60, 586, 190, 39); //Bot left
+		g2.fillRect(360, 586, 190, 39); //Bot right
+		
+		g2.setColor(Color.BLACK);
+		battlePPFont = pokeFont.deriveFont(20F);
+		g2.setFont(battlePPFont);
+		g2.drawString("Move 1", 100, 560);
+		g2.drawString("Move 2", 400, 560);
+		g2.drawString("Move 3", 100, 615);
+		g2.drawString("Move 4", 400, 615);
+		
+		
+		g2.drawImage(darkTypeIcon, 655, 512+28, 64+24, 28+6, null);
+		
+		battlePPFont = pokeFont.deriveFont(18F);
+		g2.setFont(battlePPFont);
+		g2.setColor(Color.BLACK);
+		g2.drawString("PP: 10/10", 633, 512+88);
 	}
 	
 	
@@ -317,13 +416,25 @@ public class BattleUI {
 		baseOpponentX = -440;
 		playerBackX = 950;
 		opponentFrontX = -400;	
+		
+		currentCommand = "Fight";
+		
+		commandsBoolean = true;
+		fightBoolean = false;
+		bagBoolean = false;
+		pokemonBoolean = false;
+		runBoolean = false;
 	}
 	
 	
 	
 	
 	
-	
+
+    public void drawSubWindow(int x, int y, int width, int height, Color color) {
+        g2.setColor(color);
+        g2.fillRect(x, y, width, height);
+    }
 	
 	
 	
@@ -344,6 +455,7 @@ public class BattleUI {
 			vsIcon = ImageIO.read(getClass().getResourceAsStream("/battleUI/vsIcon.png"));
 			battleOverlay = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_battle.png"));
 			battleOverlayTextbox = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_battleTextBox.png"));
+			battleOverlayFight = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_fight.png"));
 			
 			//Battle commands
 			fightCommand = ImageIO.read(getClass().getResourceAsStream("/battleCommands/command_01.png"));
@@ -373,8 +485,30 @@ public class BattleUI {
 			playerBack5 = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/player_back_5.png"));
 			rivalFront = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/rival_front.png"));
 			
-			//Poke Front
+			//types
+			fireTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/fire.png"));
+			waterTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/water.png"));
+			grassTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/grass.png"));
+			electricTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/electric.png"));
+			iceTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/ice.png"));
+			fightingTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/fight.png"));
+			poisonTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/poison.png"));
+			groundTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/ground.png"));
+			flyingTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/flying.png"));
+			psychicTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/psychic.png"));
+			bugTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/bug.png"));
+			rockTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/rock.png"));
+			ghostTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/ghost.png"));
+			dragonTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/dragon.png"));
+			darkTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/dark.png"));
+			steelTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/steel.png"));
+			fairyTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/fairy.png"));
+			normalTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/normal.png"));
+
 			
+			//Poke 
+			charizardFront = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/CHARIZARD.png"));
+			pikachuBack = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/PIKACHU.png"));
 			
 		} catch (IOException e) {
 			e.printStackTrace();
