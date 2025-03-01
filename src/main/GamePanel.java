@@ -10,6 +10,8 @@ import java.util.Comparator;
 
 import javax.swing.JPanel;
 
+import battle.Move;
+import battle.Pokemon;
 import entity.Entity;
 import entity.Player;
 import tile.CreateLayer;
@@ -17,6 +19,7 @@ import tile.TileManager;
 import ui.BattleUI;
 import ui.DialogueUI;
 import utility.KeyHandler;
+import utility.LoadExcelFilesTool;
 import utility.UtilityTool;
 
 //The painting
@@ -59,6 +62,12 @@ public class GamePanel extends JPanel implements Runnable {
 	private final Entity npc[] = new Entity[10];
 	final ArrayList<Entity> entityList = new ArrayList<>();
 	
+	//Moves
+	private final LoadExcelFilesTool loadFiles = new LoadExcelFilesTool();
+	private ArrayList<Move> moveList;
+	private ArrayList<Pokemon> pokeList;
+	
+	
 	//GameStates
 	private int gameState;
 	private final int playState = 1;
@@ -75,12 +84,17 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		this.addKeyListener(keyHandler);
 		this.setFocusable(true);
+		
 	}
 	
 	public void setUpGame() {
 		//assetSetter.setObject();
 		assetSetter.setNPC();
 		gameState = playState;
+		
+		moveList = loadFiles.loadMoves();
+		pokeList = loadFiles.loadPokemons();
+		System.out.println(pokeList.size());
 	}
 	
 	public void startGameThread() {

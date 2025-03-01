@@ -2,17 +2,18 @@ package battle;
 
 import java.util.Random;
 
-public class Attack {
+
+
+public class Move {
     private String name;
-    private Type typeOfMove;
+    private String typeOfMove;
     private String category;
     private int power;
     private int accuracy;
     private int powerPoint;
     private String description;
-    private Pokemon pokemon;
     
-    public Attack(String p_name, Type p_typeOfMove, String p_category, int p_power, int p_acc, int p_pp, String p_description, Pokemon p_pokemon) {
+    public Move(String p_name, String p_typeOfMove, String p_category, int p_power, int p_acc, int p_pp, String p_description) {
         this.name = p_name;
         this.typeOfMove = p_typeOfMove;
         this.category = p_category;
@@ -20,7 +21,6 @@ public class Attack {
         this.accuracy = p_acc;
         this.powerPoint = p_pp;
         this.description = p_description;
-        this.pokemon = p_pokemon;
     }
     
     public String getName() { 
@@ -31,11 +31,11 @@ public class Attack {
     	this.name = name;
     }
     
-	public Type getTypeOfMove() {
+	public String getTypeOfMove() {
 		return typeOfMove;
 	}
 
-	public void setTypeOfMove(Type typeOfMove) {
+	public void setTypeOfMove(String typeOfMove) {
 		this.typeOfMove = typeOfMove;
 	}
 
@@ -78,45 +78,43 @@ public class Attack {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 	
 	
 	
-	
-	
-	
-	
-	
-	public int calculateDamage(Pokemon enemy) {
-    	int level = 100;
+	public int calculateDamage(Pokemon attacker, Pokemon reciever) {
     	
     	int userAttack; 
-    	int enemyDefense;
+    	int recieverDefense;
     	
     	if(this.category == "Physical") {
-    		userAttack = this.pokemon.getAttackPower();
-    		enemyDefense = enemy.getDefensePower();
+    		userAttack = attacker.getAttackPower();
+    		recieverDefense = reciever.getDefensePower();
     	}
     	else {
-    		userAttack = this.pokemon.getSpecialAttackPower();
-    		enemyDefense = enemy.getSpecialDefensePower();    		
+    		userAttack = attacker.getSpecialAttackPower();
+    		recieverDefense = reciever.getSpecialDefensePower();    		
     	}
     	
-    	
-    	double damage_base = Math.floor((2*level) / 5) + 2; 
-    	damage_base *= this.power * userAttack/enemyDefense; 
+    	//Damage formula
+    	double damage_base = Math.floor((2*attacker.getLevel()) / 5) + 2; 
+    	damage_base *= (this.power * userAttack) / recieverDefense; 
     	damage_base /= 50; 
     	damage_base = Math.floor(damage_base) + 2;
     	
-    	if(pokemon.getType1().ordinal() == this.typeOfMove.ordinal()) {
+    	//If attacker is the same type as the move it does then it gets a bonus
+    	Type enumTypeAttackerT1 = Type.valueOf(attacker.getType1());
+    	Type enumTypeRecieverT1 = Type.valueOf(reciever.getType1());
+    	Type enumTypeMove = Type.valueOf(this.getTypeOfMove());
+    	
+    	if(enumTypeAttackerT1.ordinal() == enumTypeMove.ordinal()) {
     		damage_base *= 1.5; 
     	}
     	
-    	double effectiveness1 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getType1());
+    	double effectiveness1 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT1);
     	double effectiveness2 = 1.00;
-    	
-    	if(enemy.getType2() != null) {
-    		effectiveness2 = Effectiveness.getEffectiveness(this.typeOfMove, enemy.getType2());
+    	if(!reciever.getType2().equals("Null")) {
+    		Type enumTypeRecieverT2 = Type.valueOf(reciever.getType2()); 
+    		effectiveness2 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT2);
     	}
     	
     	int damage = (int) (damage_base * effectiveness1 * effectiveness2);
@@ -127,4 +125,6 @@ public class Attack {
     	
     	return damage; 
     }
+	
+	
 }
