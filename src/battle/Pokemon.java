@@ -19,7 +19,7 @@ public class Pokemon {
     
     private List<Move> moves;
     
-    private ArrayList<Integer> allBaseStats = new ArrayList<Integer>();
+    private ArrayList<Integer> allBaseStats;
     
 	public Pokemon(String p_name, int p_health, int p_attackPower, int p_defensePower, int p_specialAttackPower, int p_specialDefensePower, int p_speed, String p_type1) {
     	this.name = p_name;
@@ -35,6 +35,7 @@ public class Pokemon {
         this.moves = new ArrayList<>();
         this.speed = p_speed;
         
+        this.allBaseStats = new ArrayList<Integer>();
         allBaseStats.add(p_health);
         allBaseStats.add(p_attackPower);
         allBaseStats.add(p_defensePower);
@@ -57,6 +58,7 @@ public class Pokemon {
         this.moves = new ArrayList<>();
         this.speed = p_speed;
         
+        this.allBaseStats = new ArrayList<Integer>();
         allBaseStats.add(p_health);
         allBaseStats.add(p_attackPower);
         allBaseStats.add(p_defensePower);
@@ -64,6 +66,23 @@ public class Pokemon {
         allBaseStats.add(p_specialDefensePower);
         allBaseStats.add(p_speed);
     }
+	
+	public Pokemon(Pokemon other) {
+		this.name = other.name;
+    	this.level = other.level;
+    	this.exp = other.exp;
+    	this.type1 = other.type1;
+    	this.type2 = other.type2;
+    	this.health = other.health;
+    	this.attackPower = other.attackPower;
+    	this.defensePower = other.defensePower;
+    	this.specialAttackPower = other.specialAttackPower;
+    	this.specialDefensePower = other.specialDefensePower;
+        this.moves = other.moves;
+        this.speed = other.speed;
+        
+        this.allBaseStats = other.allBaseStats;
+	}
 
 	//Name
 	public String getName() {
@@ -205,5 +224,10 @@ public class Pokemon {
 		this.speed = speed;
 	}
 
+	
+	//health percentage
+	public void setHealthFromPercentage(int percentage) {
+		this.health = (int) (this.health * (percentage / 100.0));
+	}
     
 }

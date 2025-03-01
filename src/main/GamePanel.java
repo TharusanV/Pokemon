@@ -66,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private final LoadExcelFilesTool loadFiles = new LoadExcelFilesTool();
 	private ArrayList<Move> moveList;
 	private ArrayList<Pokemon> pokeList;
+	private ArrayList<Pokemon> playerTeam;
 	
 	
 	//GameStates
@@ -94,7 +95,7 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		moveList = loadFiles.loadMoves();
 		pokeList = loadFiles.loadPokemons();
-		System.out.println(pokeList.size());
+		playerTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/playerTeam.csv");
 	}
 	
 	public void startGameThread() {

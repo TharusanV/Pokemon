@@ -127,6 +127,54 @@ public class LoadExcelFilesTool {
 		return pokemonList;
 	}
 	
-	
+	public ArrayList<Pokemon> loadTrainersTeam(ArrayList<Pokemon> allPoke, ArrayList<Move> allMoves, String trainerFile) {
+		ArrayList<Pokemon> teamList = new ArrayList<Pokemon>();
+		
+	    try {
+	        InputStream is = getClass().getResourceAsStream(trainerFile);
+	        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+	        
+	        br.readLine(); // Read and discard the first row
+    
+	        String line;
+	        while ((line = br.readLine()) != null) {
+	            String[] columns = line.split(","); 
+	            
+	            //System.out.println(line);
+	            
+	            
+	            int id = Integer.parseInt(columns[0].trim()) - 1;
+	            Pokemon poke = new Pokemon(allPoke.get(id));
+	            
+	            int level = Integer.parseInt(columns[2].trim());
+	            poke.setLevel(level);
+	            
+	            int healthPercentage = Integer.parseInt(columns[1].trim());
+	            poke.setHealthFromPercentage(healthPercentage);
+	            
+	            int currentEXP = Integer.parseInt(columns[3].trim());
+	            poke.setExp(currentEXP);
+	            
+	            ArrayList<Move> pokesMoves = new ArrayList<Move>();
+	            int m1 = Integer.parseInt(columns[4].trim()) - 1;
+	            int m2 = Integer.parseInt(columns[5].trim()) - 1;
+	            int m3 = Integer.parseInt(columns[6].trim()) - 1;
+	            int m4 = Integer.parseInt(columns[7].trim()) - 1;
+	            pokesMoves.add(new Move(allMoves.get(m1)));
+	            pokesMoves.add(new Move(allMoves.get(m2)));
+	            pokesMoves.add(new Move(allMoves.get(m3)));
+	            pokesMoves.add(new Move(allMoves.get(m4)));
+	            poke.setAttacks(pokesMoves);
+	            
+	            teamList.add(poke);
+	        }
+	       
+	        br.close();
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		return teamList;	
+	}
 	
 }

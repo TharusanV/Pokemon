@@ -23,7 +23,17 @@ public class Move {
         this.description = p_description;
     }
     
-    public String getName() { 
+    public Move(Move other) {
+        this.name = other.name;
+        this.typeOfMove = other.typeOfMove;
+        this.category = other.category;
+        this.power = other.power;
+        this.accuracy = other.accuracy;
+        this.powerPoint = other.powerPoint;
+        this.description = other.description;
+	}
+
+	public String getName() { 
     	return name; 
     }
     

@@ -1,2 +1,2 @@
-Pokemon,CurrentHealth,Level,CurrentEXP,Attack 1,Attack 2,Attack 3,Attack 4
-Pikachu,100,36,0,Thunderbolt,Quick Attack,Iron Tail,Thunder
+ID,CurrentHealthPercentage,Level,CurrentEXP,Attack 1,Attack 2,Attack 3,Attack 4,Name,Attack 1,Attack 2,Attack 3,Attack 4
+25,100,36,0,861,637,428,855,Pikachu,Thunderbolt,Quick Attack,Iron Tail,Thunder
