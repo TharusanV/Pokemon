@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
@@ -8,20 +9,14 @@ import main.GamePanel;
 public class NPC extends Entity{
 	
 	
-	
 	public NPC(GamePanel gamePanel, String folderName, String character) {
 		super(gamePanel);
-		
-		solidArea = new Rectangle(0, 12, 32 * gamePanel.getScale(), 36 * gamePanel.getScale());
-		solidAreaDefaultX = solidArea.x;
-		solidAreaDefaultY = solidArea.y;
 		
 		speed = 1;
 		direction = "down";
 		dialogueSet = -1;
 		
 		getCharacterImage(folderName, character);
-		setDialogue();
 	}
 	
 	public void update() {
@@ -102,21 +97,22 @@ public class NPC extends Entity{
 		
 	}
 	
-	public void setDialogue() {
-		dialogues[0][0] = "Bill: I  heard  that  Tharusan  guy  \nis  a  decent  programmer.";
-		dialogues[0][1] = "Bill: Have  Fun!";
-	}
+
 	
 	public void speak() {
-		//Do NPC stuff
-		facePlayer();
-		startDialogue(this, dialogueSet);
-	
-		//This code can be removed and changed to fit a certain condition like maybe after a battle switch the dialogue set
-		dialogueSet++;
-		if(dialogues[dialogueSet][0] == null) {
-			dialogueSet = 0; //Reset Dialogue
-			//dialogueSet--; //Play last Dialogue set
+		if(dialogues[0][0] != null) {
+			
+			//Do NPC stuff
+			facePlayer();
+			startDialogue(this, dialogueSet);
+		
+			//This code can be removed and changed to fit a certain condition like maybe after a battle switch the dialogue set
+			dialogueSet++;
+			if(dialogues[dialogueSet][0] == null) {
+				dialogueSet = 0; //Reset Dialogue
+				//dialogueSet--; //Play last Dialogue set
+			}
+			
 		}
 	}
 	

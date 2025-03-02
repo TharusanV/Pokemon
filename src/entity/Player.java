@@ -5,9 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import battle.Pokemon;
 import main.GamePanel;
 import utility.KeyHandler;
 
@@ -32,6 +34,8 @@ public class Player extends Entity {
 		
 		setDefaultValues();
 		getCharacterImage("PlayerCharacter", "player");
+		
+		
 		
 	}
 	
@@ -200,5 +204,8 @@ public class Player extends Entity {
 		//p_g2.drawImage(currentImage, screenX, screenY, 32, 48, null);
 		//p_g2.drawRect(screenX + solidArea.x, screenY + solidArea.y, solidArea.width, solidArea.height);
 	}
+	
+	
+
 	
 }

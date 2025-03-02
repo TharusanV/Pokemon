@@ -10,6 +10,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import entity.Trainer;
 import main.GamePanel;
 
 public class BattleUI {
@@ -20,6 +21,8 @@ public class BattleUI {
 	int SCREEN_WIDTH = 800;
 	int SCREEN_HEIGHT = 640;
 	
+	Trainer opponentObj = null;
+	
 	boolean battleIntroTransition = true;
 	boolean battleStartIntro = false;
 	boolean battleStarted = false;
@@ -29,9 +32,9 @@ public class BattleUI {
 	////Note that the top left is (0,0)
 	
 	//Battle Start
-	BufferedImage playerBarIcon, rivalBarIcon;
-	BufferedImage playerBarIconSilhouette, rivalBarIconSilhouette;
-	BufferedImage playerBar, rivalBar;
+	BufferedImage playerBarIcon, opponentBarIcon;
+	BufferedImage playerBarIconSilhouette, opponentBarIconSilhouette;
+	BufferedImage playerBar, opponentBar;
 	BufferedImage vsIcon;
 	
 	int playerBarX = -SCREEN_WIDTH/2;
@@ -49,7 +52,7 @@ public class BattleUI {
 	
 	//Battle Intro
 	BufferedImage fieldBG;
-	BufferedImage playerBack1,playerBack2,playerBack3,playerBack4,playerBack5,rivalFront;
+	BufferedImage playerBack1,playerBack2,playerBack3,playerBack4,playerBack5,opponentFront;
 	BufferedImage fieldBasePlayer, fieldBaseOpponent;
 	int topRectIntro = 0;
 	int bottomRectIntro = 320;
@@ -113,7 +116,9 @@ public class BattleUI {
 	BufferedImage fairyTypeIcon;
 	BufferedImage normalTypeIcon;
 
-	
+	public String battleTextArray[][] = new String[20][20];
+	public int battleTextSet = 0;
+	public int battleTextIndex = 0;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -125,11 +130,10 @@ public class BattleUI {
 		battleTextArray[0][2] = "Go! Pikachu!";
 		
 		loadBattleImages();
+		
+		
 	}
 	
-
-
-    
     
 	public void draw(Graphics2D g2) {
 		this.g2 = g2;
@@ -151,6 +155,7 @@ public class BattleUI {
 		g2.dispose();
 	}
 	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void startBattle() {
 		Color c = new Color(0, 0, 0, 100);
@@ -158,10 +163,10 @@ public class BattleUI {
 		drawSubWindow(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, c);
 		
 		g2.drawImage(playerBar, playerBarX, battleBarY, SCREEN_WIDTH/2, 196, null);
-		g2.drawImage(rivalBar, opponentBarX, battleBarY, SCREEN_WIDTH/2, 196, null);
+		g2.drawImage(opponentBar, opponentBarX, battleBarY, SCREEN_WIDTH/2, 196, null);
 		
 		g2.drawImage(playerBarIconSilhouette, playerIconBarX, battleBarY + 8, 256, 178, null);
-		g2.drawImage(rivalBarIconSilhouette, opponentIconBarX, battleBarY + 8, 256, 178, null);
+		g2.drawImage(opponentBarIconSilhouette, opponentIconBarX, battleBarY + 8, 256, 178, null);
 		
 		
 		if(playerBarX != 0) {
@@ -174,14 +179,14 @@ public class BattleUI {
 		}
 		else if(playerIconBarX >= 60 && countdown1 != 30) {
 			g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
-			g2.drawImage(rivalBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
 			g2.drawImage(vsIcon,vs_X,vs_Y,vs_Width,vs_Height,null);
 			
 			countdown1++;
 		}
 		else if(countdown1 == 30) {
 			g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
-			g2.drawImage(rivalBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
 			g2.drawImage(vsIcon,vs_X,vs_Y,vs_Width,vs_Height,null);
 			
 			vs_Width += 4;
@@ -197,10 +202,8 @@ public class BattleUI {
 	}
 	
 	
-	public String battleTextArray[][] = new String[20][20];
-	public int battleTextSet = 0;
-	public int battleTextIndex = 0;
 	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void battleIntro() {		
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
@@ -208,7 +211,7 @@ public class BattleUI {
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
 
 		g2.drawImage(playerBack1, playerBackX, 272, 240, 240, null);
-		g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);
+		g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);
 
 		if(basePlayerX != -150) {
 			basePlayerX -= 10;
@@ -262,8 +265,6 @@ public class BattleUI {
 				battleStarted = true;
 				battleStartIntro = false;
 			}
-
-			
 		}
 	
 	}
@@ -279,27 +280,27 @@ public class BattleUI {
 
 		if(battleCounter < 60) {
 			g2.drawImage(playerBack1, playerBackX, 272, 240, 240, null);
-			g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);				
+			g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);				
 		}
 		else if(battleCounter >= 60 && battleCounter <= 65) {
 			g2.drawImage(playerBack2, playerBackX, 272, 240, 240, null);
-			g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);				
+			g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);				
 		}
 		else if(battleCounter >= 65 && battleCounter <= 70) {
 			g2.drawImage(playerBack3, playerBackX, 272, 240, 240, null);
-			g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);				
+			g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);				
 		}
 		else if(battleCounter >= 70 && battleCounter <= 75) {
 			g2.drawImage(playerBack4, playerBackX, 272, 240, 240, null);
-			g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);				
+			g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);				
 		}
 		else if(battleCounter >= 75 && battleCounter < 80) {
 			g2.drawImage(playerBack5, playerBackX, 272, 240, 240, null);
-			g2.drawImage(rivalFront, opponentFrontX, 120, 192, 192, null);				
+			g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);				
 		}
 	}
 	
-	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void inBattle() {
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
@@ -436,19 +437,33 @@ public class BattleUI {
         g2.fillRect(x, y, width, height);
     }
 	
-	
+	public void loadSpecificBattleImages() {
+		try {
+			//Battle Icons
+			opponentBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon.png"));
+			opponentBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon_silhouette.png"));
+			
+			//Battle Trainers
+			opponentFront = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/rival_front.png"));
+						
+			//Poke 
+			charizardFront = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/CHARIZARD.png"));
+			pikachuBack = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/PIKACHU.png"));
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+	}
 	
     public void loadBattleImages() {
 		try {
 			//Battle Icons
 			playerBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/TRAINER_icon.png"));
-			rivalBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon.png"));
 			playerBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/TRAINER_icon_silhouette.png"));
-			rivalBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon_silhouette.png"));
 			
 			//Battle bars
 			playerBar = ImageIO.read(getClass().getResourceAsStream("/battleBars/Player_bar.png"));
-			rivalBar = ImageIO.read(getClass().getResourceAsStream("/battleBars/Rival_bar.png"));
+			opponentBar = ImageIO.read(getClass().getResourceAsStream("/battleBars/Rival_bar.png"));
 			
 			//Battle UI
 			textbox = ImageIO.read(getClass().getResourceAsStream("/ui/textbox.png"));
@@ -483,7 +498,6 @@ public class BattleUI {
 			playerBack3 = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/player_back_3.png"));
 			playerBack4 = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/player_back_4.png"));
 			playerBack5 = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/player_back_5.png"));
-			rivalFront = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/rival_front.png"));
 			
 			//types
 			fireTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/fire.png"));
@@ -504,11 +518,6 @@ public class BattleUI {
 			steelTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/steel.png"));
 			fairyTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/fairy.png"));
 			normalTypeIcon = ImageIO.read(getClass().getResourceAsStream("/types/normal.png"));
-
-			
-			//Poke 
-			charizardFront = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/CHARIZARD.png"));
-			pikachuBack = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/PIKACHU.png"));
 			
 		} catch (IOException e) {
 			e.printStackTrace();

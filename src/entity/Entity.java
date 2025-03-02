@@ -4,9 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import battle.Pokemon;
 import main.GamePanel;
 
 public class Entity {
@@ -36,37 +38,18 @@ public class Entity {
 	
 	public boolean canMove = true;
 	
+	ArrayList<Pokemon> team;
 	
 	public Entity(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
+		
+		solidArea = new Rectangle(0, 12, 32 * gamePanel.getScale(), 36 * gamePanel.getScale());
+		solidAreaDefaultX = solidArea.x;
+		solidAreaDefaultY = solidArea.y;
+		
+		this.team = new ArrayList<Pokemon>();
 	}
 	
-	public void getCharacterImage(String folderName, String character) {
-		try {
-			up1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_1.png"));
-			up2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_2.png"));
-			up3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_3.png"));
-			up4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_4.png"));
-
-			down1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_1.png"));
-			down2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_2.png"));
-			down3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_3.png"));
-			down4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_4.png"));
-
-			left1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_1.png"));
-			left2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_2.png"));
-			left3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_3.png"));
-			left4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_4.png"));
-
-			right1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_1.png"));
-			right2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_2.png"));
-			right3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_3.png"));
-			right4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_4.png"));
-			
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-	}
 
 	public void setAction() {}
 	
@@ -230,5 +213,63 @@ public class Entity {
 		}
 	}
 	
+	
+	public ArrayList<Pokemon> getTeam() {
+		return this.team;
+	}
+	
+	public void setTeam(ArrayList<Pokemon> p_team) {
+		this.team = p_team;
+	}
+	
+	
+	public void setDialogue(String p_dialogues[][]) {
+		this.dialogues = p_dialogues;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public void getCharacterImage(String folderName, String character) {
+		try {
+			up1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_1.png"));
+			up2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_2.png"));
+			up3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_3.png"));
+			up4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_up_4.png"));
+
+			down1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_1.png"));
+			down2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_2.png"));
+			down3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_3.png"));
+			down4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_down_4.png"));
+
+			left1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_1.png"));
+			left2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_2.png"));
+			left3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_3.png"));
+			left4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_left_4.png"));
+
+			right1 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_1.png"));
+			right2 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_2.png"));
+			right3 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_3.png"));
+			right4 = ImageIO.read(getClass().getResourceAsStream("/characters/"+folderName+"/"+character+"_right_4.png"));
+			
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
 	
 }

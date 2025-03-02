@@ -11,6 +11,8 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import entity.Entity;
+import entity.NPC;
+import entity.Trainer;
 import main.GamePanel;
 
 public class DialogueUI {
@@ -114,7 +116,15 @@ public class DialogueUI {
 			npc.dialogueIndex = 0;
 			
 			if(gamePanel.getGameState() == gamePanel.getDialogueState()) {
-				gamePanel.setGameState(gamePanel.getPlayState());
+				if(npc instanceof Trainer) {
+					Trainer tempTrainer = (Trainer) npc;
+					if(tempTrainer.getCanBattle() == true) {
+						gamePanel.setGameState(gamePanel.getBattleState());
+					}
+				}
+				else {
+					gamePanel.setGameState(gamePanel.getPlayState());
+				}
 			}
 		}
 		

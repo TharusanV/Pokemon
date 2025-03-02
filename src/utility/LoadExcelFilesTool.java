@@ -16,9 +16,6 @@ public class LoadExcelFilesTool {
 	String movesFile = "/csvFiles/allMoves.csv";
 	String baseStateFile = "/csvFiles/pokeBaseStats.csv";
 	
-	String playerTeamFile = "/csvFiles/playerTeam.csv";
-	String rivalTeamFile = "/csvFiles/rivalTeam.csv";
-	
 	
 	public ArrayList<Move> loadMoves() {
 		ArrayList<Move> moveList = new ArrayList<Move>();

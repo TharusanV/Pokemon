@@ -25,6 +25,14 @@ import utility.UtilityTool;
 //The painting
 public class GamePanel extends JPanel implements Runnable {
 	
+	private final KeyHandler keyHandler = new KeyHandler(this);
+	private final CollisionChecker collisionChecker = new CollisionChecker(this);
+	private final AssetSetter assetSetter = new AssetSetter(this);
+	private final BattleUI battleUI = new BattleUI(this);
+	private final DialogueUI dialogueUI = new DialogueUI(this);
+	private final EventHandler eventHandler = new EventHandler(this);
+	private final UtilityTool utilityTool = new UtilityTool();
+	
 	//Variables for defining panel size
 	final int originalTileSize = 32;
 	final int scale = 2;
@@ -48,15 +56,6 @@ public class GamePanel extends JPanel implements Runnable {
 	private final CreateLayer treeLayer = new CreateLayer(this, tileManager, 1);
 	private final CreateLayer buildingLayer = new CreateLayer(this, tileManager, 2);
 	
-	
-	private final KeyHandler keyHandler = new KeyHandler(this);
-	private final CollisionChecker collisionChecker = new CollisionChecker(this);
-	private final AssetSetter assetSetter = new AssetSetter(this);
-	private final BattleUI battleUI = new BattleUI(this);
-	private final DialogueUI dialogueUI = new DialogueUI(this);
-	private final EventHandler eventHandler = new EventHandler(this);
-	private final UtilityTool utilityTool = new UtilityTool();
-	
 	private final Player player = new Player(this, keyHandler);
 	private final Entity obj[] = new Entity[10];
 	private final Entity npc[] = new Entity[10];
@@ -67,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private ArrayList<Move> moveList;
 	private ArrayList<Pokemon> pokeList;
 	private ArrayList<Pokemon> playerTeam;
+	private ArrayList<Pokemon> rivalTeam;
 	
 	
 	//GameStates
@@ -91,11 +91,17 @@ public class GamePanel extends JPanel implements Runnable {
 	public void setUpGame() {
 		//assetSetter.setObject();
 		assetSetter.setNPC();
+		
 		gameState = playState;
 		
 		moveList = loadFiles.loadMoves();
 		pokeList = loadFiles.loadPokemons();
+		
 		playerTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/playerTeam.csv");
+		player.setTeam(playerTeam);
+		
+		rivalTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/rivalTeam.csv");
+		getNpc()[1].setTeam(rivalTeam);
 	}
 	
 	public void startGameThread() {
@@ -138,7 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		
 		if(gameState == battleState) {
-			
+			battleUI.loadSpecificBattleImages();
 		}
 		
 		if(gameState == dialogueState) {
@@ -162,17 +168,14 @@ public class GamePanel extends JPanel implements Runnable {
 		entityList.add(player);
 		
 		for(int i = 0; i < npc.length; i++) {
-			if(npc[i] != null) {
-				entityList.add(npc[i]);
-			}
+			if(npc[i] != null) {entityList.add(npc[i]);}
 		}
 		
 		for(int i = 0; i < obj.length; i++) {
-			if(obj[i] != null) {
-				entityList.add(obj[i]);
-			}
+			if(obj[i] != null) {entityList.add(obj[i]);}
 		}
 
+		//Note: As we are sorting, an issue is that currently if an npc has a higher y value there is an overlap issue with the player
 		Collections.sort(entityList, new Comparator<Entity>() {
 			@Override
 			public int compare(Entity e1, Entity e2) {
@@ -188,19 +191,15 @@ public class GamePanel extends JPanel implements Runnable {
 		entityList.clear();
 		
 		//UI drawings based on states
-		if(gameState == battleState) {
-			battleUI.draw(g2);
-		}
-		if(gameState == dialogueState) {
-			dialogueUI.draw(g2);
-		}
+		if(gameState == battleState) {battleUI.draw(g2);}
+		if(gameState == dialogueState) {dialogueUI.draw(g2);}
 		
 		g2.dispose(); //Save memory after the drawing is created
 	}
 
 	
 	
-	
+	////////////////////////////////////////////////////////////////////////////////
 	
 	
 	
