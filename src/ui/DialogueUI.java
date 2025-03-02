@@ -119,6 +119,7 @@ public class DialogueUI {
 				if(npc instanceof Trainer) {
 					Trainer tempTrainer = (Trainer) npc;
 					if(tempTrainer.getCanBattle() == true) {
+						gamePanel.getBattleUi().opponentObj = tempTrainer;
 						gamePanel.setGameState(gamePanel.getBattleState());
 					}
 				}

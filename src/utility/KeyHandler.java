@@ -45,11 +45,6 @@ public class KeyHandler implements KeyListener {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				enterPressed = true;
 			}
-			
-			//TESTING BATTLE PLEASE REMOVE LATER
-			if(keyValue == KeyEvent.VK_Z) {
-				gamePanel.setGameState(gamePanel.getBattleState());
-			}
 		}
 		
 		//BATTLE STATE
@@ -58,38 +53,40 @@ public class KeyHandler implements KeyListener {
 				enterPressed = true;
 			}
 			else if(keyValue == KeyEvent.VK_W) {
-				if(gamePanel.getBattleUi().currentCommand == "Pokemon") {
-					gamePanel.getBattleUi().currentCommand = "Fight";
+				if(gamePanel.getBattleUi().currentCommand == 2) {
+					gamePanel.getBattleUi().currentCommand = 0;
 				}
-				if(gamePanel.getBattleUi().currentCommand == "Run") {
-					gamePanel.getBattleUi().currentCommand = "Bag";
+				if(gamePanel.getBattleUi().currentCommand == 3) {
+					gamePanel.getBattleUi().currentCommand = 1;
 				}
 			}
 			else if(keyValue == KeyEvent.VK_A) {
-				if(gamePanel.getBattleUi().currentCommand == "Bag") {
-					gamePanel.getBattleUi().currentCommand = "Fight";
+				if(gamePanel.getBattleUi().currentCommand == 1) {
+					gamePanel.getBattleUi().currentCommand = 0;
 				}
-				if(gamePanel.getBattleUi().currentCommand == "Run") {
-					gamePanel.getBattleUi().currentCommand = "Pokemon";
+				if(gamePanel.getBattleUi().currentCommand == 3) {
+					gamePanel.getBattleUi().currentCommand = 2;
 				}
 			}
 			else if(keyValue == KeyEvent.VK_S) {
-				if(gamePanel.getBattleUi().currentCommand == "Fight") {
-					gamePanel.getBattleUi().currentCommand = "Pokemon";
+				if(gamePanel.getBattleUi().currentCommand == 0) {
+					gamePanel.getBattleUi().currentCommand = 2;
 				}
-				if(gamePanel.getBattleUi().currentCommand == "Bag") {
-					gamePanel.getBattleUi().currentCommand = "Run";
+				if(gamePanel.getBattleUi().currentCommand == 1) {
+					gamePanel.getBattleUi().currentCommand = 3;
 				}
 			}
 			else if(keyValue == KeyEvent.VK_D) {
-				if(gamePanel.getBattleUi().currentCommand == "Fight") {
-					gamePanel.getBattleUi().currentCommand = "Bag";
+				if(gamePanel.getBattleUi().currentCommand == 0) {
+					gamePanel.getBattleUi().currentCommand = 1;
 				}
-				if(gamePanel.getBattleUi().currentCommand == "Pokemon") {
-					gamePanel.getBattleUi().currentCommand = "Run";
+				if(gamePanel.getBattleUi().currentCommand == 2) {
+					gamePanel.getBattleUi().currentCommand = 3;
 				}
 			}
 			
+			
+			//REMOVE LATER
 			if(keyValue == KeyEvent.VK_Z) {
 				gamePanel.setGameState(gamePanel.getPlayState());
 				gamePanel.getBattleUi().resetValues();

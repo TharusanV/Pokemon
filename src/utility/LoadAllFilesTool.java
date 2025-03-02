@@ -9,9 +9,9 @@ import battle.Move;
 import battle.Pokemon;
 import battle.Type;
 
-public class LoadExcelFilesTool {
+public class LoadAllFilesTool {
 
-	public LoadExcelFilesTool() {};
+	public LoadAllFilesTool() {};
 	
 	String movesFile = "/csvFiles/allMoves.csv";
 	String baseStateFile = "/csvFiles/pokeBaseStats.csv";
@@ -78,7 +78,6 @@ public class LoadExcelFilesTool {
 	    }
 		return moveList;
 	}
-	
 	
 	public ArrayList<Pokemon> loadPokemons() {
 		ArrayList<Pokemon> pokemonList = new ArrayList<Pokemon>();

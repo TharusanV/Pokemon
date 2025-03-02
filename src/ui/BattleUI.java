@@ -3,6 +3,7 @@ package ui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import entity.Player;
 import entity.Trainer;
 import main.GamePanel;
 
@@ -21,6 +23,7 @@ public class BattleUI {
 	int SCREEN_WIDTH = 800;
 	int SCREEN_HEIGHT = 640;
 	
+	private Player playerObj = null;
 	Trainer opponentObj = null;
 	
 	boolean battleIntroTransition = true;
@@ -79,7 +82,7 @@ public class BattleUI {
 	int runCommandY = fightCommandY + commandHeight - 6;
 	
 	
-	public String currentCommand = "Fight";
+	public int currentCommand = 0;
 	boolean commandsBoolean = true;
 	boolean fightBoolean = false;
 	boolean bagBoolean = false;
@@ -120,23 +123,22 @@ public class BattleUI {
 	public int battleTextSet = 0;
 	public int battleTextIndex = 0;
 	
+	
+	int selectedMoveIndex = 0;
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public BattleUI(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
 		
-		battleTextArray[0][0] = "Trainer would like to battle!";
-		battleTextArray[0][1] = "Trainer sent out Charizard!";
-		battleTextArray[0][2] = "Go! Pikachu!";
-		
 		loadBattleImages();
-		
-		
 	}
 	
     
 	public void draw(Graphics2D g2) {
 		this.g2 = g2;
+		
+		prepBattleState();
 	
 		g2.setFont(pokeFont);
 		g2.setColor(Color.BLACK);
@@ -156,6 +158,19 @@ public class BattleUI {
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void prepBattleState() {
+		if(opponentObj == null) {
+			battleTextArray[0][0] = "Trainer would like to battle!";
+			battleTextArray[0][1] = "Trainer sent out Charizard!";
+			battleTextArray[0][2] = "Go! Pikachu!";
+		}
+		else {
+			battleTextArray[0][0] = opponentObj.getName() + " would like to battle!";
+			battleTextArray[0][1] = opponentObj.getName() + " sent out " + opponentObj.getTeam().get(0).getName() + "!";
+			battleTextArray[0][2] = "Go! " + playerObj.getTeam().get(0).getName() + "!";
+		}
+	}
 	
 	public void startBattle() {
 		Color c = new Color(0, 0, 0, 100);
@@ -334,25 +349,25 @@ public class BattleUI {
 	
 	
 	public void battleShowCommands() {
-		if(currentCommand == "Fight") {
+		if(currentCommand == 0) {
 			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(fightCommandSelected, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
 		}
-		else if(currentCommand == "Bag") {
+		else if(currentCommand == 1) {
 			g2.drawImage(bagCommandSelected, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
 		}
-		else if(currentCommand == "Pokemon") {
+		else if(currentCommand == 2) {
 			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(pokemonCommandSelected, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(runCommand, runCommandX, runCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
 		}	
-		else if(currentCommand == "Run"){
+		else if(currentCommand == 3){
 			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(runCommandSelected, runCommandX, runCommandY, commandWidth, commandHeight, null);
@@ -363,19 +378,40 @@ public class BattleUI {
 	public void fightShowMoves() {
 		g2.drawImage(battleOverlayFight, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 
+		// Set color and fill rectangles
 		g2.setColor(Color.WHITE);
-		g2.fillRect(60, 531, 190, 39); //Top left
-		g2.fillRect(360, 531, 190, 39); //Top right
-		g2.fillRect(60, 586, 190, 39); //Bot left
-		g2.fillRect(360, 586, 190, 39); //Bot right
-		
+		g2.fillRect(60, 531, 190, 39); // Top left
+		g2.fillRect(360, 531, 190, 39); // Top right
+		g2.fillRect(60, 586, 190, 39); // Bot left
+		g2.fillRect(360, 586, 190, 39); // Bot right
+
 		g2.setColor(Color.BLACK);
-		battlePPFont = pokeFont.deriveFont(20F);
+		battlePPFont = pokeFont.deriveFont(16F);
 		g2.setFont(battlePPFont);
-		g2.drawString("Move 1", 100, 560);
-		g2.drawString("Move 2", 400, 560);
-		g2.drawString("Move 3", 100, 615);
-		g2.drawString("Move 4", 400, 615);
+		FontMetrics metrics = g2.getFontMetrics();
+
+		int[][] rects = {
+		    {60, 531},  // Top left
+		    {360, 531}, // Top right
+		    {60, 586},  // Bot left
+		    {360, 586}  // Bot right
+		};
+	
+		
+		for (int i = 0; i < 4; i++) {
+			if(currentCommand == i) {g2.setColor(Color.RED);}
+			else {g2.setColor(Color.BLACK);}	
+			
+		    String text = playerObj.getTeam().get(0).getAttacks().get(i).getName();
+		    int textWidth = metrics.stringWidth(text);
+		    int textHeight = metrics.getAscent(); // Gets the height above baseline
+
+		    int centerX = rects[i][0] + (190 - textWidth) / 2; 
+		    int centerY = rects[i][1] + ((39 - textHeight) / 2) + textHeight; 
+		    
+		    g2.drawString(text, centerX, centerY);
+		}
+
 		
 		
 		g2.drawImage(darkTypeIcon, 655, 512+28, 64+24, 28+6, null);
@@ -418,7 +454,7 @@ public class BattleUI {
 		playerBackX = 950;
 		opponentFrontX = -400;	
 		
-		currentCommand = "Fight";
+		currentCommand = 0;
 		
 		commandsBoolean = true;
 		fightBoolean = false;
@@ -454,6 +490,7 @@ public class BattleUI {
 			e.printStackTrace();
 		}	
 	}
+	
 	
     public void loadBattleImages() {
 		try {
@@ -533,6 +570,16 @@ public class BattleUI {
 			e.printStackTrace();
 		}
     }
+
+
+	public Player getPlayerObj() {
+		return playerObj;
+	}
+
+
+	public void setPlayerObj(Player playerObj) {
+		this.playerObj = playerObj;
+	}
 	
 	
 	

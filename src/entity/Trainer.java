@@ -8,8 +8,9 @@ import main.GamePanel;
 public class Trainer extends Entity {
 	
 	private boolean canBattle;
+	private String name;
 	
-	public Trainer(GamePanel gamePanel, String folderName, String character, boolean p_canBattle, String p_startingDirection) {
+	public Trainer(GamePanel gamePanel, String folderName, String character, String p_name, boolean p_canBattle, String p_startingDirection) {
 		super(gamePanel);
 		
 		speed = 1;
@@ -19,6 +20,7 @@ public class Trainer extends Entity {
 		getCharacterImage(folderName, character);
 		
 		this.canBattle = p_canBattle;
+		this.setName(p_name);
 	}
 	
 	public void update() {
@@ -50,6 +52,14 @@ public class Trainer extends Entity {
 	
 	public void setCanBattle(boolean p_canBattle) {
 		this.canBattle = p_canBattle;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

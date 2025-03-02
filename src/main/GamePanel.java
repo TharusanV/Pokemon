@@ -19,7 +19,7 @@ import tile.TileManager;
 import ui.BattleUI;
 import ui.DialogueUI;
 import utility.KeyHandler;
-import utility.LoadExcelFilesTool;
+import utility.LoadAllFilesTool;
 import utility.UtilityTool;
 
 //The painting
@@ -62,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable {
 	final ArrayList<Entity> entityList = new ArrayList<>();
 	
 	//Moves
-	private final LoadExcelFilesTool loadFiles = new LoadExcelFilesTool();
+	private final LoadAllFilesTool loadFiles = new LoadAllFilesTool();
 	private ArrayList<Move> moveList;
 	private ArrayList<Pokemon> pokeList;
 	private ArrayList<Pokemon> playerTeam;
@@ -102,6 +102,8 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		rivalTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/rivalTeam.csv");
 		getNpc()[1].setTeam(rivalTeam);
+		
+		getBattleUi().setPlayerObj(player);
 	}
 	
 	public void startGameThread() {
