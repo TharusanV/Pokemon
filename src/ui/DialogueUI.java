@@ -120,6 +120,7 @@ public class DialogueUI {
 					Trainer tempTrainer = (Trainer) npc;
 					if(tempTrainer.getCanBattle() == true) {
 						gamePanel.getBattleUi().opponentObj = tempTrainer;
+						gamePanel.getBattleUi().prepBattleState();
 						gamePanel.setGameState(gamePanel.getBattleState());
 					}
 				}

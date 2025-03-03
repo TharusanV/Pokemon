@@ -8,10 +8,14 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import battle.Move;
 import battle.Pokemon;
 import main.GamePanel;
 
 public class Entity {
+	
+	int selectedPokemonIndex = 0;
+	Pokemon currentPokemon = null;
 
 	GamePanel gamePanel;
 	public int worldX_pos;
@@ -230,8 +234,71 @@ public class Entity {
 	
 	
 	
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	public Pokemon getCurrentPokemon() {
+		return currentPokemon;
+	}
+
+	public void setCurrentPokemon(int newIndex) {
+		this.currentPokemon = team.get(newIndex);
+	}
+	
+	public int getSelectedPokemonIndex() {
+		return selectedPokemonIndex;
+	}
+
+	public void setSelectedPokemonIndex(int selectedPokemonIndex) {
+		setCurrentPokemon(selectedPokemonIndex);
+		this.selectedPokemonIndex = selectedPokemonIndex;
+	}
 	
 	
+	
+	public boolean hasPokemonWithHealth() {
+		for(int i = 0; i<team.size(); i++) {
+			if(team.get(i).getHealth() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public int findFirstMemberWithHealth() {
+		for(int i = 0; i<team.size(); i++) {
+			if(team.get(i).getHealth() > 0) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	
+	
+	public boolean canPlayerDoAnyMoves() {
+		for(int i = 0; i<team.get(selectedPokemonIndex).getAttacks().size(); i++) {
+			Move move = team.get(selectedPokemonIndex).getAttacks().get(i);
+			
+			if(move.getCurrentPP() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean checkCertainMove(int currentCommand) {
+		if(team.get(selectedPokemonIndex).getAttacks().get(currentCommand).getCurrentPP() > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 	
 	
 	

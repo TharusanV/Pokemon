@@ -10,8 +10,9 @@ public class Move {
     private String category;
     private int power;
     private int accuracy;
-    private int powerPoint;
+    private int ppMax;
     private String description;
+    private int currentPP;
     
     public Move(String p_name, String p_typeOfMove, String p_category, int p_power, int p_acc, int p_pp, String p_description) {
         this.name = p_name;
@@ -19,8 +20,9 @@ public class Move {
         this.category = p_category;
         this.power = p_power;
         this.accuracy = p_acc;
-        this.powerPoint = p_pp;
+        this.ppMax = p_pp;
         this.description = p_description;
+        this.currentPP = p_pp;
     }
     
     public Move(Move other) {
@@ -29,8 +31,9 @@ public class Move {
         this.category = other.category;
         this.power = other.power;
         this.accuracy = other.accuracy;
-        this.powerPoint = other.powerPoint;
+        this.ppMax = other.ppMax;
         this.description = other.description;
+        this.currentPP = other.currentPP;
 	}
 
 	public String getName() { 
@@ -73,12 +76,12 @@ public class Move {
 		this.accuracy = accuracy;
 	}
 
-	public int getPowerPoint() {
-		return powerPoint;
+	public int getPPMax() {
+		return ppMax;
 	}
 
-	public void setPowerPoint(int powerPoint) {
-		this.powerPoint = powerPoint;
+	public void setPPMax(int ppMax) {
+		this.ppMax = ppMax;
 	}
 
     public String getDescription() {
@@ -91,6 +94,14 @@ public class Move {
 	
 	
 	
+	public int getCurrentPP() {
+		return currentPP;
+	}
+
+	public void setCurrentPP(int currentPP) {
+		this.currentPP = currentPP;
+	}
+
 	public int calculateDamage(Pokemon attacker, Pokemon reciever) {
     	
     	int userAttack; 
@@ -112,9 +123,9 @@ public class Move {
     	damage_base = Math.floor(damage_base) + 2;
     	
     	//If attacker is the same type as the move it does then it gets a bonus
-    	Type enumTypeAttackerT1 = Type.valueOf(attacker.getType1());
-    	Type enumTypeRecieverT1 = Type.valueOf(reciever.getType1());
-    	Type enumTypeMove = Type.valueOf(this.getTypeOfMove());
+    	Type enumTypeAttackerT1 = Type.valueOf(attacker.getType1().toUpperCase());
+    	Type enumTypeRecieverT1 = Type.valueOf(reciever.getType1().toUpperCase());
+    	Type enumTypeMove = Type.valueOf(this.getTypeOfMove().toUpperCase());
     	
     	if(enumTypeAttackerT1.ordinal() == enumTypeMove.ordinal()) {
     		damage_base *= 1.5; 
@@ -123,7 +134,7 @@ public class Move {
     	double effectiveness1 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT1);
     	double effectiveness2 = 1.00;
     	if(!reciever.getType2().equals("Null")) {
-    		Type enumTypeRecieverT2 = Type.valueOf(reciever.getType2()); 
+    		Type enumTypeRecieverT2 = Type.valueOf(reciever.getType2().toUpperCase()); 
     		effectiveness2 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT2);
     	}
     	

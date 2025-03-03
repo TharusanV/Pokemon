@@ -8,9 +8,13 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import battle.Move;
+import battle.Pokemon;
 import entity.Player;
 import entity.Trainer;
 import main.GamePanel;
@@ -23,8 +27,6 @@ public class BattleUI {
 	int SCREEN_WIDTH = 800;
 	int SCREEN_HEIGHT = 640;
 	
-	private Player playerObj = null;
-	Trainer opponentObj = null;
 	
 	boolean battleIntroTransition = true;
 	boolean battleStartIntro = false;
@@ -84,10 +86,15 @@ public class BattleUI {
 	
 	public int currentCommand = 0;
 	boolean commandsBoolean = true;
+	
 	boolean fightBoolean = false;
 	boolean bagBoolean = false;
 	boolean pokemonBoolean = false;
 	boolean runBoolean = false;
+	
+	boolean playingMoveBoolean = false;
+	int playerSelectedMoveIndex = 0;
+	
 	
 	//Pokemon (testing)
 	BufferedImage charizardFront, pikachuBack;
@@ -99,32 +106,23 @@ public class BattleUI {
 	int charIndex = 0;
 	String combinedText = "";
 	
+	Player playerObj = null;
+	Trainer opponentObj = null;
+	
 	//Type icons
-	BufferedImage fireTypeIcon;
-	BufferedImage waterTypeIcon;
-	BufferedImage grassTypeIcon;
-	BufferedImage electricTypeIcon;
-	BufferedImage iceTypeIcon;
-	BufferedImage fightingTypeIcon;
-	BufferedImage poisonTypeIcon;
-	BufferedImage groundTypeIcon;
-	BufferedImage flyingTypeIcon;
-	BufferedImage psychicTypeIcon;
-	BufferedImage bugTypeIcon;
-	BufferedImage rockTypeIcon;
-	BufferedImage ghostTypeIcon;
-	BufferedImage dragonTypeIcon;
-	BufferedImage darkTypeIcon;
-	BufferedImage steelTypeIcon;
-	BufferedImage fairyTypeIcon;
-	BufferedImage normalTypeIcon;
+	BufferedImage fireTypeIcon, waterTypeIcon, grassTypeIcon, electricTypeIcon, iceTypeIcon, fightingTypeIcon, poisonTypeIcon, groundTypeIcon, flyingTypeIcon, psychicTypeIcon, bugTypeIcon, rockTypeIcon, ghostTypeIcon, dragonTypeIcon, darkTypeIcon, steelTypeIcon, fairyTypeIcon, normalTypeIcon;
 
-	public String battleTextArray[][] = new String[20][20];
-	public int battleTextSet = 0;
-	public int battleTextIndex = 0;
+	public ArrayList<String> introTextAL = new ArrayList<String>();
+	public int introTextIndex = 0;
+	
+	public ArrayList<String> inCombatTextAL = new ArrayList<String>();
+	public int inCombatTextIndex = 0;
+	
+	public ArrayList<String> runAttemptTextAL = new ArrayList<String>();
+	public int runAttemptTextIndex = 0;
 	
 	
-	int selectedMoveIndex = 0;
+	HashMap<String, BufferedImage> movesTypeHM = new HashMap<String, BufferedImage>();
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -132,13 +130,49 @@ public class BattleUI {
 		this.gamePanel = p_gamePanel;
 		
 		loadBattleImages();
+		movesTypeHM.put("Fire", fireTypeIcon);
+		movesTypeHM.put("Water", waterTypeIcon);
+		movesTypeHM.put("Grass", grassTypeIcon);
+		movesTypeHM.put("Electric", electricTypeIcon);
+		movesTypeHM.put("Ice", iceTypeIcon);
+		movesTypeHM.put("Fighting", fightingTypeIcon);
+		movesTypeHM.put("Poison", poisonTypeIcon);
+		movesTypeHM.put("Ground", groundTypeIcon);
+		movesTypeHM.put("Flying", flyingTypeIcon);
+		movesTypeHM.put("Psychic", psychicTypeIcon);
+		movesTypeHM.put("Bug", bugTypeIcon);
+		movesTypeHM.put("Rock", rockTypeIcon);
+		movesTypeHM.put("Ghost", ghostTypeIcon);
+		movesTypeHM.put("Dragon", dragonTypeIcon);
+		movesTypeHM.put("Dark", darkTypeIcon);
+		movesTypeHM.put("Steel", steelTypeIcon);
+		movesTypeHM.put("Fairy", fairyTypeIcon);
+		movesTypeHM.put("Normal", normalTypeIcon);
 	}
 	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public void prepBattleState() {
+		introTextAL.clear();
+		inCombatTextAL.clear();
+		runAttemptTextAL.clear();
+		
+		opponentObj.setSelectedPokemonIndex(opponentObj.findFirstMemberWithHealth());
+		playerObj.setSelectedPokemonIndex(playerObj.findFirstMemberWithHealth());
+	
+		introTextAL.add(opponentObj.getName() + " would like to battle!");
+		introTextAL.add(opponentObj.getName() + " sent out " + opponentObj.getCurrentPokemon().getName() + "!");
+		introTextAL.add("Go! " + playerObj.getCurrentPokemon().getName() + "!");
+			
+		runAttemptTextAL.add("You cannot run from a Trainer battle!");
+		
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
     
 	public void draw(Graphics2D g2) {
 		this.g2 = g2;
-		
-		prepBattleState();
 	
 		g2.setFont(pokeFont);
 		g2.setColor(Color.BLACK);
@@ -159,18 +193,7 @@ public class BattleUI {
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	public void prepBattleState() {
-		if(opponentObj == null) {
-			battleTextArray[0][0] = "Trainer would like to battle!";
-			battleTextArray[0][1] = "Trainer sent out Charizard!";
-			battleTextArray[0][2] = "Go! Pikachu!";
-		}
-		else {
-			battleTextArray[0][0] = opponentObj.getName() + " would like to battle!";
-			battleTextArray[0][1] = opponentObj.getName() + " sent out " + opponentObj.getTeam().get(0).getName() + "!";
-			battleTextArray[0][2] = "Go! " + playerObj.getTeam().get(0).getName() + "!";
-		}
-	}
+
 	
 	public void startBattle() {
 		Color c = new Color(0, 0, 0, 100);
@@ -251,8 +274,8 @@ public class BattleUI {
 		
 		if(basePlayerX == -150) {
 			//battleCounter++;
-			if(battleTextArray[battleTextSet][battleTextIndex] != null) {
-				char characters[] = battleTextArray[battleTextSet][battleTextIndex].toCharArray();
+			if(introTextIndex < introTextAL.size()) {
+				char characters[] = introTextAL.get(introTextIndex).toCharArray();
 				if(charIndex < characters.length) {
 					String s = String.valueOf(characters[charIndex]);
 					combinedText = combinedText + s;
@@ -264,10 +287,9 @@ public class BattleUI {
 					charIndex = 0;
 					combinedText = "";
 					
-					if(gamePanel.getGameState() == gamePanel.getBattleState()) {
-						battleTextIndex++;
-						gamePanel.getKeyHandler().enterPressed = false;
-					}
+					
+					introTextIndex++;
+					gamePanel.getKeyHandler().enterPressed = false;
 				}
 				
 				for(String line : currentDialogue.split("\n")) {
@@ -276,7 +298,7 @@ public class BattleUI {
 			}
 
 			else {
-				battleTextIndex = 0;
+				introTextIndex = 0;
 				battleStarted = true;
 				battleStartIntro = false;
 			}
@@ -329,19 +351,20 @@ public class BattleUI {
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
-		//Battle commands
-		if(gamePanel.getKeyHandler().enterPressed == true) {
-			commandsBoolean = !commandsBoolean;
-			fightBoolean = !fightBoolean;
-			gamePanel.getKeyHandler().enterPressed = false;
-		}
-		
-		
+
 		if(commandsBoolean == true) {
 			battleShowCommands();
 		}
-		if(fightBoolean == true) {
-			fightShowMoves();
+		else if(fightBoolean == true) {
+			fightCommand_Open();
+		}
+		else if(playingMoveBoolean == true) {
+			fightCommand_PlayOutMove();
+		}
+		
+		
+		else if(runBoolean == true) {
+			runCommand_Open();
 		}
 		
 
@@ -373,9 +396,25 @@ public class BattleUI {
 			g2.drawImage(runCommandSelected, runCommandX, runCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(fightCommand, fightCommandX, fightCommandY, commandWidth, commandHeight, null);
 		}
+		
+		
+		if(gamePanel.getKeyHandler().enterPressed == true) {
+			if(currentCommand == 0) {
+				fightBoolean = true;
+				commandsBoolean = false;
+			}
+				
+			if(currentCommand == 3) {
+				runBoolean = true;
+				commandsBoolean = false;
+			}
+			
+			gamePanel.getKeyHandler().enterPressed = false;
+		}
 	}
 	
-	public void fightShowMoves() {
+	
+	public void fightCommand_Open() {
 		g2.drawImage(battleOverlayFight, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 
 		// Set color and fill rectangles
@@ -390,19 +429,13 @@ public class BattleUI {
 		g2.setFont(battlePPFont);
 		FontMetrics metrics = g2.getFontMetrics();
 
-		int[][] rects = {
-		    {60, 531},  // Top left
-		    {360, 531}, // Top right
-		    {60, 586},  // Bot left
-		    {360, 586}  // Bot right
-		};
+		int[][] rects = { {60, 531}, {360, 531}, {60, 586}, {360, 586} };
 	
-		
 		for (int i = 0; i < 4; i++) {
 			if(currentCommand == i) {g2.setColor(Color.RED);}
 			else {g2.setColor(Color.BLACK);}	
 			
-		    String text = playerObj.getTeam().get(0).getAttacks().get(i).getName();
+		    String text = playerObj.getCurrentPokemon().getAttacks().get(i).getName();
 		    int textWidth = metrics.stringWidth(text);
 		    int textHeight = metrics.getAscent(); // Gets the height above baseline
 
@@ -412,17 +445,141 @@ public class BattleUI {
 		    g2.drawString(text, centerX, centerY);
 		}
 
-		
-		
-		g2.drawImage(darkTypeIcon, 655, 512+28, 64+24, 28+6, null);
+
+		g2.drawImage(movesTypeHM.get(playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getTypeOfMove()), 655, 512+28, 64+24, 28+6, null);
 		
 		battlePPFont = pokeFont.deriveFont(18F);
 		g2.setFont(battlePPFont);
 		g2.setColor(Color.BLACK);
-		g2.drawString("PP: 10/10", 633, 512+88);
+		g2.drawString("PP: " + playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getCurrentPP() + "/" + playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getPPMax(), 633, 512+88);
+	
+		
+		if(gamePanel.getKeyHandler().enterPressed == true) {
+			if(playerObj.canPlayerDoAnyMoves() && playerObj.checkCertainMove(currentCommand)) {
+				playerSelectedMoveIndex = currentCommand;
+				turnAssets();
+				playingMoveBoolean = true;
+				fightBoolean = false;
+				gamePanel.getKeyHandler().enterPressed = false;
+			}
+		}
+		
+		if(gamePanel.getKeyHandler().escapePressed == true) {
+			commandsBoolean = true;
+			fightBoolean = false;
+			gamePanel.getKeyHandler().escapePressed = false;
+			
+		}
+	}
+	
+	public void turnAssets() {
+		//AI move
+		Move opponentMove = null;
+		int opponentMoveIndex = opponentObj.selectMoveIndex();
+		if(opponentMoveIndex != -1) {
+			opponentMove = opponentObj.getCurrentPokemon().getAttacks().get(opponentMoveIndex);
+		}
+				
+		Move playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerSelectedMoveIndex);
+				
+		int opponentDamageToPlayer = opponentMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
+		int playerDamageToOpponent = playerMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
+				
+		if(playerObj.getCurrentPokemon().getSpeed() > opponentObj.getCurrentPokemon().getSpeed()) {
+			inCombatTextAL.add(playerObj.getCurrentPokemon().getName() + " uses " + playerMove.getName());
+		}
+		else {
+			inCombatTextAL.add(opponentObj.getCurrentPokemon().getName() + " uses " + opponentMove.getName());
+		}
 	}
 	
 	
+	public void fightCommand_PlayOutMove() {
+		if(inCombatTextIndex == 0) {
+			//drawSingleDialogueWindow(inCombatTextAL.get(inCombatTextIndex), inCombatTextIndex);
+			
+			g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+			
+			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
+				
+			if(gamePanel.getKeyHandler().enterPressed == true) {
+				charIndex = 0;
+				combinedText = "";
+				
+				inCombatTextIndex++;
+				gamePanel.getKeyHandler().enterPressed = false;
+			}
+				
+			for(String line : currentDialogue.split("\n")) {
+				g2.drawString(line, 64, 512+64);
+			}
+		}
+		else {
+			inCombatTextIndex = 0;
+			fightBoolean = true;
+			playingMoveBoolean = false;
+		}
+	}
+	
+	public void bagCommand_Open() {
+		
+	}
+	
+	public void pokemonCommand_Open() {
+		
+	}
+	
+	public void runCommand_Open() {
+		if(runAttemptTextAL.isEmpty()) {
+			gamePanel.setGameState(gamePanel.getPlayState());
+			resetValues();
+		}
+		else {
+			g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+			
+			
+			if(runAttemptTextIndex < runAttemptTextAL.size()) {
+				char characters[] = runAttemptTextAL.get(runAttemptTextIndex).toCharArray();
+				if(charIndex < characters.length) {
+					String s = String.valueOf(characters[charIndex]);
+					combinedText = combinedText + s;
+					currentDialogue = combinedText;
+					charIndex++;
+				}
+				
+				if(gamePanel.getKeyHandler().enterPressed == true) {
+					charIndex = 0;
+					combinedText = "";
+					
+					runAttemptTextIndex++;
+					gamePanel.getKeyHandler().enterPressed = false;
+					
+				}
+				
+				for(String line : currentDialogue.split("\n")) {
+					g2.drawString(line, 64, 512+64);
+				}
+			}
+
+			else {
+				runAttemptTextIndex = 0;
+				commandsBoolean = true;
+				runBoolean = false;
+			}
+		}
+		
+		
+	}
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
 	
 	
 	public void resetValues() {
@@ -464,10 +621,6 @@ public class BattleUI {
 	}
 	
 	
-	
-	
-	
-
     public void drawSubWindow(int x, int y, int width, int height, Color color) {
         g2.setColor(color);
         g2.fillRect(x, y, width, height);

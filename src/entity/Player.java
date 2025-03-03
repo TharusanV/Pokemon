@@ -6,9 +6,11 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import battle.Move;
 import battle.Pokemon;
 import main.GamePanel;
 import utility.KeyHandler;
@@ -19,6 +21,8 @@ public class Player extends Entity {
 	
 	public final int screenX;
 	public final int screenY;
+	
+	
 	
 	public Player(GamePanel p_gamePanel, KeyHandler p_keyHandler) {
 		super(p_gamePanel);
@@ -34,9 +38,6 @@ public class Player extends Entity {
 		
 		setDefaultValues();
 		getCharacterImage("PlayerCharacter", "player");
-		
-		
-		
 	}
 	
 	public void setDefaultValues() {
@@ -206,6 +207,8 @@ public class Player extends Entity {
 	}
 	
 	
+	
+
 
 	
 }

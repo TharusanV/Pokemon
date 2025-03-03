@@ -13,6 +13,7 @@ public class KeyHandler implements KeyListener {
 	public boolean downPressed;
 	
 	public boolean enterPressed;
+	public boolean escapePressed;
 	
 	private GamePanel gamePanel;
 	
@@ -51,6 +52,9 @@ public class KeyHandler implements KeyListener {
 		else if(gamePanel.getGameState() == gamePanel.getBattleState()) {
 			if(keyValue == KeyEvent.VK_ENTER) {
 				enterPressed = true;
+			}
+			else if(keyValue == KeyEvent.VK_ESCAPE) {
+				escapePressed = true;
 			}
 			else if(keyValue == KeyEvent.VK_W) {
 				if(gamePanel.getBattleUi().currentCommand == 2) {
