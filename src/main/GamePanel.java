@@ -57,8 +57,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private final CreateLayer buildingLayer = new CreateLayer(this, tileManager, 2);
 	
 	private final Player player = new Player(this, keyHandler);
-	private final Entity obj[] = new Entity[10];
-	private final Entity npc[] = new Entity[10];
+	private final Entity obj[] = new Entity[1];
+	private final Entity npc[] = new Entity[3];
 	final ArrayList<Entity> entityList = new ArrayList<>();
 	
 	//Moves
@@ -146,7 +146,7 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 		
 		if(gameState == battleState) {
-			battleUI.loadSpecificBattleImages();
+			
 		}
 		
 		if(gameState == dialogueState) {
@@ -166,17 +166,13 @@ public class GamePanel extends JPanel implements Runnable {
 		treeLayer.draw(g2);
 		buildingLayer.draw(g2);
 		
-		//Add entities to list
-		entityList.add(player);
-		
 		for(int i = 0; i < npc.length; i++) {
 			if(npc[i] != null) {entityList.add(npc[i]);}
 		}
 		
-		for(int i = 0; i < obj.length; i++) {
-			if(obj[i] != null) {entityList.add(obj[i]);}
-		}
+		entityList.add(player);
 
+		/*
 		//Note: As we are sorting, an issue is that currently if an npc has a higher y value there is an overlap issue with the player
 		Collections.sort(entityList, new Comparator<Entity>() {
 			@Override
@@ -186,10 +182,12 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 			
 		});
+		*/
 		
 		for(int i = 0; i < entityList.size(); i++) {
 			entityList.get(i).draw(g2);
 		}
+		
 		entityList.clear();
 		
 		//UI drawings based on states

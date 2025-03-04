@@ -27,14 +27,11 @@ public class BattleUI {
 	int SCREEN_WIDTH = 800;
 	int SCREEN_HEIGHT = 640;
 	
-	
 	boolean battleIntroTransition = true;
 	boolean battleStartIntro = false;
 	boolean battleStarted = false;
 	
 	int battleCounter = 0;
-	
-	////Note that the top left is (0,0)
 	
 	//Battle Start
 	BufferedImage playerBarIcon, opponentBarIcon;
@@ -59,6 +56,11 @@ public class BattleUI {
 	BufferedImage fieldBG;
 	BufferedImage playerBack1,playerBack2,playerBack3,playerBack4,playerBack5,opponentFront;
 	BufferedImage fieldBasePlayer, fieldBaseOpponent;
+	
+	BufferedImage battleOverlayLineUp;
+	BufferedImage ballIcon, emptyBallIcon, faintedBallIcon;
+	
+	
 	int topRectIntro = 0;
 	int bottomRectIntro = 320;
 	
@@ -122,7 +124,20 @@ public class BattleUI {
 	public int runAttemptTextIndex = 0;
 	
 	
+	Move opponentMove = null;
+	Move playerMove = null;
+	int opponentDamageToPlayer = 0;
+	int playerDamageToOpponent = 0;
+	boolean playerIsFirst = false;
+	
+	
 	HashMap<String, BufferedImage> movesTypeHM = new HashMap<String, BufferedImage>();
+	
+	BufferedImage userHealthBox;
+	BufferedImage opponentHealthBox;
+	
+	int playerHealthBarWidth = 152;
+	int oppHealthBarWidth = 152;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -130,24 +145,7 @@ public class BattleUI {
 		this.gamePanel = p_gamePanel;
 		
 		loadBattleImages();
-		movesTypeHM.put("Fire", fireTypeIcon);
-		movesTypeHM.put("Water", waterTypeIcon);
-		movesTypeHM.put("Grass", grassTypeIcon);
-		movesTypeHM.put("Electric", electricTypeIcon);
-		movesTypeHM.put("Ice", iceTypeIcon);
-		movesTypeHM.put("Fighting", fightingTypeIcon);
-		movesTypeHM.put("Poison", poisonTypeIcon);
-		movesTypeHM.put("Ground", groundTypeIcon);
-		movesTypeHM.put("Flying", flyingTypeIcon);
-		movesTypeHM.put("Psychic", psychicTypeIcon);
-		movesTypeHM.put("Bug", bugTypeIcon);
-		movesTypeHM.put("Rock", rockTypeIcon);
-		movesTypeHM.put("Ghost", ghostTypeIcon);
-		movesTypeHM.put("Dragon", dragonTypeIcon);
-		movesTypeHM.put("Dark", darkTypeIcon);
-		movesTypeHM.put("Steel", steelTypeIcon);
-		movesTypeHM.put("Fairy", fairyTypeIcon);
-		movesTypeHM.put("Normal", normalTypeIcon);
+
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,8 +190,6 @@ public class BattleUI {
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-
 	
 	public void startBattle() {
 		Color c = new Color(0, 0, 0, 100);
@@ -262,6 +258,10 @@ public class BattleUI {
 		//Battle menu
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		
+		
+		lineUpUI();
+		
 		
 		if(bottomRectIntro != 640) {
 			topRectIntro -= 4;
@@ -349,10 +349,12 @@ public class BattleUI {
 		g2.drawImage(charizardFront, opponentFrontX+35, 120, 192, 192, null);
 		
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
-		g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
-
+		healthBarsUI();
+		
 		if(commandsBoolean == true) {
+			g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+			
 			battleShowCommands();
 		}
 		else if(fightBoolean == true) {
@@ -361,7 +363,6 @@ public class BattleUI {
 		else if(playingMoveBoolean == true) {
 			fightCommand_PlayOutMove();
 		}
-		
 		
 		else if(runBoolean == true) {
 			runCommand_Open();
@@ -457,11 +458,12 @@ public class BattleUI {
 		if(gamePanel.getKeyHandler().enterPressed == true) {
 			if(playerObj.canPlayerDoAnyMoves() && playerObj.checkCertainMove(currentCommand)) {
 				playerSelectedMoveIndex = currentCommand;
-				turnAssets();
+				turnPrep();
 				playingMoveBoolean = true;
 				fightBoolean = false;
-				gamePanel.getKeyHandler().enterPressed = false;
 			}
+			
+			gamePanel.getKeyHandler().enterPressed = false;
 		}
 		
 		if(gamePanel.getKeyHandler().escapePressed == true) {
@@ -471,58 +473,46 @@ public class BattleUI {
 			
 		}
 	}
-	
-	public void turnAssets() {
-		//AI move
-		Move opponentMove = null;
-		int opponentMoveIndex = opponentObj.selectMoveIndex();
-		if(opponentMoveIndex != -1) {
-			opponentMove = opponentObj.getCurrentPokemon().getAttacks().get(opponentMoveIndex);
-		}
-				
-		Move playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerSelectedMoveIndex);
-				
-		int opponentDamageToPlayer = opponentMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
-		int playerDamageToOpponent = playerMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
-				
-		if(playerObj.getCurrentPokemon().getSpeed() > opponentObj.getCurrentPokemon().getSpeed()) {
-			inCombatTextAL.add(playerObj.getCurrentPokemon().getName() + " uses " + playerMove.getName());
-		}
-		else {
-			inCombatTextAL.add(opponentObj.getCurrentPokemon().getName() + " uses " + opponentMove.getName());
-		}
-	}
-	
-	
+		
 	public void fightCommand_PlayOutMove() {
+		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		
 		if(inCombatTextIndex == 0) {
-			//drawSingleDialogueWindow(inCombatTextAL.get(inCombatTextIndex), inCombatTextIndex);
-			
-			g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
-			
-			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
-			if(charIndex < characters.length) {
-				String s = String.valueOf(characters[charIndex]);
-				combinedText = combinedText + s;
-				currentDialogue = combinedText;
-				charIndex++;
-			}
+			drawDialogueSingle(inCombatTextAL);
+		}
+		else if(inCombatTextIndex == 1) {
+			if(playerIsFirst == true) {
+				playerObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
 				
-			if(gamePanel.getKeyHandler().enterPressed == true) {
-				charIndex = 0;
-				combinedText = "";
+				for(int i = 0; i < playerDamageToOpponent; i++) {
+					playerHealthBarWidth--;
+				}
+				
+				if(opponentObj.getCurrentPokemon().hasFainted() == false) {drawDialogueSingle(inCombatTextAL);}
+				else {inCombatTextIndex = 10;}
+			}
+			else {
+				opponentObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
+				
+				if(playerObj.getCurrentPokemon().hasFainted() == false) {drawDialogueSingle(inCombatTextAL);}
+				else {inCombatTextIndex = 10;}
+			}
+		}
+		else if(inCombatTextIndex == 2) {
+			if(playerIsFirst == false) {
+				playerObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
 				
 				inCombatTextIndex++;
-				gamePanel.getKeyHandler().enterPressed = false;
 			}
+			else {
+				opponentObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
 				
-			for(String line : currentDialogue.split("\n")) {
-				g2.drawString(line, 64, 512+64);
+				inCombatTextIndex++;
 			}
 		}
 		else {
 			inCombatTextIndex = 0;
-			fightBoolean = true;
+			commandsBoolean = true;
 			playingMoveBoolean = false;
 		}
 	}
@@ -577,6 +567,35 @@ public class BattleUI {
 		
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public void turnPrep() {
+		inCombatTextAL.clear();
+		
+		int opponentMoveIndex = opponentObj.selectMoveIndex();
+		if(opponentMoveIndex != -1) {
+			opponentMove = opponentObj.getCurrentPokemon().getAttacks().get(opponentMoveIndex);
+		}
+				
+		playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerSelectedMoveIndex);
+				
+		opponentDamageToPlayer = opponentMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
+		playerDamageToOpponent = playerMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
+				
+		if(playerObj.getCurrentPokemon().getSpeed() >= opponentObj.getCurrentPokemon().getSpeed()) {
+			playerIsFirst = true;
+			
+			inCombatTextAL.add(playerObj.getCurrentPokemon().getName() + " uses " + playerMove.getName());
+			inCombatTextAL.add(opponentObj.getCurrentPokemon().getName() + " uses " + opponentMove.getName());
+		}
+		else {
+			playerIsFirst = false;
+			
+			inCombatTextAL.add(opponentObj.getCurrentPokemon().getName() + " uses " + opponentMove.getName());
+			inCombatTextAL.add(playerObj.getCurrentPokemon().getName() + " uses " + playerMove.getName());
+		}
+	}
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
@@ -621,13 +640,103 @@ public class BattleUI {
 	}
 	
 	
+	
+	public void drawDialogueSingle(ArrayList<String> p_arrayList) {
+		char characters[] = p_arrayList.get(inCombatTextIndex).toCharArray();
+		if(charIndex < characters.length) {
+			String s = String.valueOf(characters[charIndex]);
+			combinedText = combinedText + s;
+			currentDialogue = combinedText;
+			charIndex++;
+		}
+			
+		if(gamePanel.getKeyHandler().enterPressed == true) {
+			charIndex = 0;
+			combinedText = "";
+			
+			inCombatTextIndex++;
+			gamePanel.getKeyHandler().enterPressed = false;
+		}
+			
+		for(String line : currentDialogue.split("\n")) {
+			g2.drawString(line, 64, 512+64);
+		}
+	}
+	
+	
+	////////////////////////////////////////////////////////////////////////////
+	
+	public void lineUpUI() {
+		g2.drawImage(battleOverlayLineUp, -10, 190, 440, 12, null);
+		g2.drawImage(battleOverlayLineUp, 810, 430, -440, 12, null); //Flipped
+		for(int i = 1; i <= 6; i++) {
+			if(playerObj.getTeam().size() >= i) {
+				if(playerObj.getTeam().get(i-1).hasFainted() == false) {
+					g2.drawImage(ballIcon, 20 + (i * 50), 150, 40, 40, null); 
+				}
+				else {
+					g2.drawImage(faintedBallIcon, 20 + (i * 50), 150, 40, 40, null); 
+				}
+			}
+			else {
+				g2.drawImage(emptyBallIcon, 20  + (i * 50), 150, 40, 40, null); 
+			}
+			
+			
+			if(opponentObj.getTeam().size() >= i) {
+				if(opponentObj.getTeam().get(i-1).hasFainted() == false) {
+					g2.drawImage(ballIcon, 420  + (i * 50), 390, 40, 40, null); 
+				}
+				else {
+					g2.drawImage(faintedBallIcon, 420  + (i * 50), 390, 40, 40, null); 
+				}
+			}
+			else {
+				g2.drawImage(emptyBallIcon, 420  + (i * 50), 390, 40, 40, null); 
+			}
+		}
+	}
+	
+	
+	
+	public void healthBarsUI() {
+		g2.drawImage(opponentHealthBox, 0, 50, 410, 122, null);
+		g2.drawImage(userHealthBox, SCREEN_WIDTH - 410, 340, 410, 122, null);
+		
+		g2.drawString("Lv" + Integer.toString(opponentObj.getCurrentPokemon().getLevel()), 250, 110);
+		g2.drawString("Lv" + Integer.toString(playerObj.getCurrentPokemon().getLevel()), 670, 400);
+		
+		g2.setColor(Color.GREEN);
+		g2.fillRect(186, 129, oppHealthBarWidth, 12);
+		g2.fillRect(604, 419, playerHealthBarWidth, 12);
+		
+		pokeFont = pokeFont.deriveFont(Font.BOLD, 18F);
+		g2.setColor(Color.BLACK);
+		g2.setFont(pokeFont);
+		g2.drawString(opponentObj.getCurrentPokemon().getName().toUpperCase(), 10, 110);
+		g2.drawString(playerObj.getCurrentPokemon().getName().toUpperCase(), 440, 400);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////
+	
     public void drawSubWindow(int x, int y, int width, int height, Color color) {
         g2.setColor(color);
         g2.fillRect(x, y, width, height);
     }
 	
-	public void loadSpecificBattleImages() {
+	
+    public void loadBattleImages() {
 		try {
+			userHealthBox = ImageIO.read(getClass().getResourceAsStream("/battleUI/databox_user.png"));
+			opponentHealthBox = ImageIO.read(getClass().getResourceAsStream("/battleUI/databox_opp.png"));
+			
 			//Battle Icons
 			opponentBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon.png"));
 			opponentBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon_silhouette.png"));
@@ -639,14 +748,9 @@ public class BattleUI {
 			charizardFront = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/CHARIZARD.png"));
 			pikachuBack = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/PIKACHU.png"));
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	
-    public void loadBattleImages() {
-		try {
+			
+			//////////////////////////////////////////////////////////////////////////////
+			
 			//Battle Icons
 			playerBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/TRAINER_icon.png"));
 			playerBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/TRAINER_icon_silhouette.png"));
@@ -661,6 +765,11 @@ public class BattleUI {
 			battleOverlay = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_battle.png"));
 			battleOverlayTextbox = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_battleTextBox.png"));
 			battleOverlayFight = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_fight.png"));
+			
+			battleOverlayLineUp = ImageIO.read(getClass().getResourceAsStream("/battleUI/overlay_lineup.png"));
+			ballIcon = ImageIO.read(getClass().getResourceAsStream("/battleUI/icon_ball.png"));
+			emptyBallIcon = ImageIO.read(getClass().getResourceAsStream("/battleUI/icon_ball_empty.png"));
+			faintedBallIcon = ImageIO.read(getClass().getResourceAsStream("/battleUI/icon_ball_faint.png"));
 			
 			//Battle commands
 			fightCommand = ImageIO.read(getClass().getResourceAsStream("/battleCommands/command_01.png"));
@@ -715,13 +824,35 @@ public class BattleUI {
 		
     	//Loading fonts
 		try {
-			InputStream is = getClass().getResourceAsStream("/font/PKMN RBYGSC.ttf");
-			pokeFont = Font.createFont(Font.TRUETYPE_FONT, is);
+			InputStream is1 = getClass().getResourceAsStream("/font/PKMN RBYGSC.ttf");
+			pokeFont = Font.createFont(Font.TRUETYPE_FONT, is1);
+			
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		
+		
+		movesTypeHM.put("Fire", fireTypeIcon);
+		movesTypeHM.put("Water", waterTypeIcon);
+		movesTypeHM.put("Grass", grassTypeIcon);
+		movesTypeHM.put("Electric", electricTypeIcon);
+		movesTypeHM.put("Ice", iceTypeIcon);
+		movesTypeHM.put("Fighting", fightingTypeIcon);
+		movesTypeHM.put("Poison", poisonTypeIcon);
+		movesTypeHM.put("Ground", groundTypeIcon);
+		movesTypeHM.put("Flying", flyingTypeIcon);
+		movesTypeHM.put("Psychic", psychicTypeIcon);
+		movesTypeHM.put("Bug", bugTypeIcon);
+		movesTypeHM.put("Rock", rockTypeIcon);
+		movesTypeHM.put("Ghost", ghostTypeIcon);
+		movesTypeHM.put("Dragon", dragonTypeIcon);
+		movesTypeHM.put("Dark", darkTypeIcon);
+		movesTypeHM.put("Steel", steelTypeIcon);
+		movesTypeHM.put("Fairy", fairyTypeIcon);
+		movesTypeHM.put("Normal", normalTypeIcon);
     }
 
 
