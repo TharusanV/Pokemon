@@ -107,7 +107,7 @@ public class Move {
     	int userAttack; 
     	int recieverDefense;
     	
-    	if(this.category == "Physical") {
+    	if (this.category.equals("Physical")) {
     		userAttack = attacker.getAttackPower();
     		recieverDefense = reciever.getDefensePower();
     	}
@@ -117,34 +117,37 @@ public class Move {
     	}
     	
     	//Damage formula
-    	double damage_base = Math.floor((2*attacker.getLevel()) / 5) + 2; 
-    	damage_base *= (this.power * userAttack) / recieverDefense; 
-    	damage_base /= 50; 
-    	damage_base = Math.floor(damage_base) + 2;
+    	double damage_base = Math.floor((2 * attacker.getLevel()) / 5.0) + 2; 
+        damage_base *= (this.power * (double) userAttack) / recieverDefense; 
+        damage_base /= 50; 
+        damage_base = Math.floor(damage_base) + 2;
     	
-    	//If attacker is the same type as the move it does then it gets a bonus
-    	Type enumTypeAttackerT1 = Type.valueOf(attacker.getType1().toUpperCase());
-    	Type enumTypeRecieverT1 = Type.valueOf(reciever.getType1().toUpperCase());
-    	Type enumTypeMove = Type.valueOf(this.getTypeOfMove().toUpperCase());
-    	
-    	if(enumTypeAttackerT1.ordinal() == enumTypeMove.ordinal()) {
-    		damage_base *= 1.5; 
-    	}
-    	
-    	double effectiveness1 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT1);
-    	double effectiveness2 = 1.00;
-    	if(!reciever.getType2().equals("Null")) {
-    		Type enumTypeRecieverT2 = Type.valueOf(reciever.getType2().toUpperCase()); 
-    		effectiveness2 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT2);
-    	}
-    	
-    	int damage = (int) (damage_base * effectiveness1 * effectiveness2);
-    	
-    	Random random = new Random();
-    	int range = random.nextInt((255 - 217) + 1) + 217;
-    	damage = (int) Math.floor((damage * range) / 255); 
-    	
-    	return damage; 
+        // STAB (Same-Type Attack Bonus)
+        Type enumTypeAttackerT1 = Type.valueOf(attacker.getType1().toUpperCase());
+        Type enumTypeMove = Type.valueOf(this.getTypeOfMove().toUpperCase());
+
+        if (enumTypeAttackerT1.equals(enumTypeMove)) { 
+            damage_base *= 1.5; 
+        }
+
+        // Effectiveness calculation
+        Type enumTypeRecieverT1 = Type.valueOf(reciever.getType1().toUpperCase());
+        double effectiveness1 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT1);
+        double effectiveness2 = 1.00;
+
+        if (reciever.getType2() != null && !reciever.getType2().equalsIgnoreCase("Null")) {
+            Type enumTypeRecieverT2 = Type.valueOf(reciever.getType2().toUpperCase());
+            effectiveness2 = Effectiveness.getEffectiveness(enumTypeMove, enumTypeRecieverT2);
+        }
+
+        int damage = (int) (damage_base * effectiveness1 * effectiveness2);
+
+        // Random variation in damage (217-255 range)
+        Random random = new Random();
+        int range = 217 + random.nextInt(39); // (255 - 217 + 1) simplifies to 39
+        damage = (int) Math.floor((damage * range) / 255.0);
+
+        return damage; 
     }
 	
 	

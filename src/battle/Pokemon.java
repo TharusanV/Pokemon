@@ -17,6 +17,8 @@ public class Pokemon {
     private int specialDefensePower;
     private int speed;
     
+    private int maxHealth = 0;
+    
     private List<Move> moves;
     
     private ArrayList<Integer> allBaseStats;
@@ -81,6 +83,7 @@ public class Pokemon {
         this.moves = other.moves;
         this.speed = other.speed;
         
+        this.maxHealth = other.maxHealth;
         this.allBaseStats = other.allBaseStats;
 	}
 
@@ -104,6 +107,7 @@ public class Pokemon {
 		double tempHP = ((2*allBaseStats.get(0) * level) / 100) + level + 10;
 		int newHp = (int) Math.floor(tempHP);
 		setHealth(newHp);
+		setMaxHealth(newHp);
 		
 		double tempAtt = ((2*allBaseStats.get(1) * level) / 100) + 5;
 		int newAtt = (int) Math.floor(tempAtt);
@@ -171,6 +175,14 @@ public class Pokemon {
     public boolean hasFainted() {
         return this.health <= 0;
     }
+    
+	public int getMaxHealth() {
+		return maxHealth;
+	}
+	
+	public void setMaxHealth(int health) {
+		this.maxHealth = health;
+	}
     
     //combat stats
     public int getAttackPower() {

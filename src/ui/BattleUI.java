@@ -139,6 +139,9 @@ public class BattleUI {
 	int playerHealthBarWidth = 152;
 	int oppHealthBarWidth = 152;
 	
+	int newHealthBarWidthP = 152;
+	int newHealthBarWidthO = 152;
+	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public BattleUI(GamePanel p_gamePanel) {
@@ -459,6 +462,10 @@ public class BattleUI {
 			if(playerObj.canPlayerDoAnyMoves() && playerObj.checkCertainMove(currentCommand)) {
 				playerSelectedMoveIndex = currentCommand;
 				turnPrep();
+				
+				//System.out.println(opponentObj.getCurrentPokemon().getName() + " - " + playerObj.getCurrentPokemon().getName());
+				//System.out.println(playerDamageToOpponent + " - " + opponentDamageToPlayer);
+				
 				playingMoveBoolean = true;
 				fightBoolean = false;
 			}
@@ -473,45 +480,93 @@ public class BattleUI {
 			
 		}
 	}
-		
+	
+	int turnIndex = 0;
+	
 	public void fightCommand_PlayOutMove() {
 		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
-		if(inCombatTextIndex == 0) {
-			drawDialogueSingle(inCombatTextAL);
-		}
-		else if(inCombatTextIndex == 1) {
-			if(playerIsFirst == true) {
-				playerObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
+		if(turnIndex == 0) {
+			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
+			
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
 				
-				for(int i = 0; i < playerDamageToOpponent; i++) {
-					playerHealthBarWidth--;
+			if(charIndex == characters.length) {
+				if(playerIsFirst == true) {
+					if(oppHealthBarWidth == newHealthBarWidthO) {
+						opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
+						charIndex = 0;
+						combinedText = "";
+						inCombatTextIndex++;
+						turnIndex++;
+					}
+					
+					oppHealthBarWidth--;
 				}
-				
-				if(opponentObj.getCurrentPokemon().hasFainted() == false) {drawDialogueSingle(inCombatTextAL);}
-				else {inCombatTextIndex = 10;}
+				else {
+					if(playerHealthBarWidth == newHealthBarWidthP) {
+						playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
+						charIndex = 0;
+						combinedText = "";
+						inCombatTextIndex++;
+						turnIndex++;
+					}
+					
+					playerHealthBarWidth--;	
+				}
 			}
-			else {
-				opponentObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
 				
-				if(playerObj.getCurrentPokemon().hasFainted() == false) {drawDialogueSingle(inCombatTextAL);}
-				else {inCombatTextIndex = 10;}
+			for(String line : currentDialogue.split("\n")) {
+				g2.drawString(line, 64, 512+64);
 			}
 		}
-		else if(inCombatTextIndex == 2) {
-			if(playerIsFirst == false) {
-				playerObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
-				
-				inCombatTextIndex++;
+		else if(turnIndex == 1) {
+			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
+			
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
 			}
-			else {
-				opponentObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
 				
-				inCombatTextIndex++;
+			if(charIndex == characters.length) {
+				if(playerIsFirst == false) {
+					if(oppHealthBarWidth == newHealthBarWidthO) {
+						opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
+						charIndex = 0;
+						combinedText = "";
+						inCombatTextIndex++;
+						turnIndex++;
+					}
+					
+					oppHealthBarWidth--;
+				}
+				else {
+					if(playerHealthBarWidth == newHealthBarWidthP) {
+						playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
+						charIndex = 0;
+						combinedText = "";
+						inCombatTextIndex++;
+						turnIndex++;
+					}
+					
+					playerHealthBarWidth--;	
+				}
+			}
+				
+			for(String line : currentDialogue.split("\n")) {
+				g2.drawString(line, 64, 512+64);
 			}
 		}
 		else {
 			inCombatTextIndex = 0;
+			turnIndex = 0;
 			commandsBoolean = true;
 			playingMoveBoolean = false;
 		}
@@ -580,7 +635,7 @@ public class BattleUI {
 				
 		playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerSelectedMoveIndex);
 				
-		opponentDamageToPlayer = opponentMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
+		opponentDamageToPlayer = opponentMove.calculateDamage(opponentObj.getCurrentPokemon(), playerObj.getCurrentPokemon());
 		playerDamageToOpponent = playerMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
 				
 		if(playerObj.getCurrentPokemon().getSpeed() >= opponentObj.getCurrentPokemon().getSpeed()) {
@@ -595,7 +650,26 @@ public class BattleUI {
 			inCombatTextAL.add(opponentObj.getCurrentPokemon().getName() + " uses " + opponentMove.getName());
 			inCombatTextAL.add(playerObj.getCurrentPokemon().getName() + " uses " + playerMove.getName());
 		}
+		
+		
+		int newHealthP = Math.max(0,playerObj.getCurrentPokemon().getHealth() - opponentDamageToPlayer);
+		newHealthBarWidthP = (int) ((double) newHealthP / playerObj.getCurrentPokemon().getMaxHealth() * playerHealthBarWidth);
+		
+		int newHealthO = Math.max(0,opponentObj.getCurrentPokemon().getHealth() - playerDamageToOpponent);
+		newHealthBarWidthO = (int) ((double) newHealthO / opponentObj.getCurrentPokemon().getMaxHealth() * oppHealthBarWidth);;
 	}
+	
+	public void updateHealthBarOpp() {
+		int targetHealth = opponentObj.getCurrentPokemon().getHealth() - playerDamageToOpponent;
+		int targetWidthO = (targetHealth * oppHealthBarWidth) / opponentObj.getCurrentPokemon().getMaxHealth();
+		
+		for(int i = oppHealthBarWidth; i > targetWidthO; i--) {
+			oppHealthBarWidth = i;
+		}
+	}
+	
+
+	
 	
 	
 	///////////////////////////////////////////////////////////////////////////////////////////
