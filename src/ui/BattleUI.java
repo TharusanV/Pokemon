@@ -656,23 +656,36 @@ public class BattleUI {
 		else if((playerObj.getCurrentPokemon().hasFainted() || opponentObj.getCurrentPokemon().hasFainted())  && (turnIndex == 1 || turnIndex == 2)) {
 			if(playerObj.getCurrentPokemon().hasFainted()) {
 				if(playerObj.hasPokemonWithHealth()) {
-					
+					playerObj.setCurrentPokemon(playerObj.findFirstMemberWithHealth());
+					inCombatTextIndex = 0;
+					turnIndex = 0;
+					commandsBoolean = true;
+					playingMoveBoolean = false;
 				}
 				else {
-					
+					inCombatTextIndex = 0;
+					turnIndex = 0;
+					playingMoveBoolean = false;
+					battleStarted = false;
+					battleEnding = true;
 				}
 			}
 			
 			if(opponentObj.getCurrentPokemon().hasFainted()) {
 				if(opponentObj.hasPokemonWithHealth()) {
-					
-				}
-				else {
 					opponentObj.setCurrentPokemon(opponentObj.findFirstMemberWithHealth());
 					inCombatTextIndex = 0;
 					turnIndex = 0;
 					commandsBoolean = true;
 					playingMoveBoolean = false;
+				}
+				else {
+					inCombatTextIndex = 0;
+					turnIndex = 0;
+					playingMoveBoolean = false;
+					battleStarted = false;
+					battleEnding = true;
+					
 				}
 			}
 		}
@@ -737,7 +750,7 @@ public class BattleUI {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	private void endingBattle() {
-		
+		gamePanel.setGameState(gamePanel.getPlayState());
 	}
 	
 	
