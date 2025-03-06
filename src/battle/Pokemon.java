@@ -1,4 +1,5 @@
 package battle;
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Pokemon {
@@ -23,7 +24,10 @@ public class Pokemon {
     
     private ArrayList<Integer> allBaseStats;
     
-	public Pokemon(String p_name, int p_health, int p_attackPower, int p_defensePower, int p_specialAttackPower, int p_specialDefensePower, int p_speed, String p_type1) {
+    private BufferedImage frontImage;
+    private BufferedImage backImage;
+    
+	public Pokemon(String p_name, int p_health, int p_attackPower, int p_defensePower, int p_specialAttackPower, int p_specialDefensePower, int p_speed, String p_type1, BufferedImage frontImage, BufferedImage backImage) {
     	this.name = p_name;
     	this.level = 1;
     	this.exp = 0;
@@ -44,9 +48,12 @@ public class Pokemon {
         allBaseStats.add(p_specialAttackPower);
         allBaseStats.add(p_specialDefensePower);
         allBaseStats.add(p_speed);
+        
+        this.frontImage = frontImage;
+        this.backImage = backImage;
     }
 
-	public Pokemon(String p_name, int p_health, int p_attackPower, int p_defensePower, int p_specialAttackPower, int p_specialDefensePower, int p_speed, String p_type1, String p_type2) {
+	public Pokemon(String p_name, int p_health, int p_attackPower, int p_defensePower, int p_specialAttackPower, int p_specialDefensePower, int p_speed, String p_type1, String p_type2, BufferedImage frontImage, BufferedImage backImage) {
     	this.name = p_name;
     	this.level = 1;
     	this.exp = 0;
@@ -67,6 +74,9 @@ public class Pokemon {
         allBaseStats.add(p_specialAttackPower);
         allBaseStats.add(p_specialDefensePower);
         allBaseStats.add(p_speed);
+        
+        this.frontImage = frontImage;
+        this.backImage = backImage;
     }
 	
 	public Pokemon(Pokemon other) {
@@ -85,6 +95,9 @@ public class Pokemon {
         
         this.maxHealth = other.maxHealth;
         this.allBaseStats = other.allBaseStats;
+        
+        this.frontImage = other.frontImage;
+        this.backImage = other.backImage;
 	}
 
 	//Name
@@ -241,5 +254,25 @@ public class Pokemon {
 	public void setHealthFromPercentage(int percentage) {
 		this.health = (int) (this.health * (percentage / 100.0));
 	}
+
+	
+	//Images 
+	public BufferedImage getFrontImage() {
+		return frontImage;
+	}
+
+	public void setFrontImage(BufferedImage frontImage) {
+		this.frontImage = frontImage;
+	}
+
+	public BufferedImage getBackImage() {
+		return backImage;
+	}
+
+	public void setBackImage(BufferedImage backImage) {
+		this.backImage = backImage;
+	}
+	
+	
     
 }

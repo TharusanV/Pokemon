@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -32,6 +33,9 @@ public class BattleUI {
 	ArrayList<String> introTextAL = new ArrayList<String>();
 	ArrayList<String> inCombatTextAL = new ArrayList<String>();
 	ArrayList<String> runAttemptTextAL = new ArrayList<String>();
+	ArrayList<String> endingTextAL = new ArrayList<String>();
+	
+	
 	
 	//////	Declaring Asset Variables //////
 	//Battle Start
@@ -62,7 +66,7 @@ public class BattleUI {
 	BufferedImage oppPokeball;
 	
 	//Pokemon (testing)
-	BufferedImage oppBackImage, playerBackImage;
+	BufferedImage oppPokemonImage, playerPokemonImage;
 	
 	//Dialogue
 	Font pokeFont;
@@ -176,16 +180,27 @@ public class BattleUI {
 		introTextAL.clear();
 		inCombatTextAL.clear();
 		runAttemptTextAL.clear();
+		endingTextAL.clear();
+		
+		opponentBarIcon =  opponentObj.getBarIcon();
+		opponentBarIconSilhouette = opponentObj.getBarIconSilhouette();
+		opponentBar = opponentObj.getBar();
+		opponentFront = opponentObj.getFrontIcon();
 		
 		opponentObj.setSelectedPokemonIndex(opponentObj.findFirstMemberWithHealth());
 		playerObj.setSelectedPokemonIndex(playerObj.findFirstMemberWithHealth());
 	
+		oppPokemonImage = opponentObj.getCurrentPokemon().getFrontImage(); 
+		playerPokemonImage = playerObj.getCurrentPokemon().getBackImage();
+		
 		introTextAL.add(opponentObj.getName() + " would like to battle!");
 		introTextAL.add(opponentObj.getName() + " sent out " + opponentObj.getCurrentPokemon().getName() + "!");
 		introTextAL.add("Go! " + playerObj.getCurrentPokemon().getName() + "!");
 			
 		runAttemptTextAL.add("You cannot run from a Trainer battle!");
 		
+		endingTextAL.add("You are out of usable Pokémon!");
+		endingTextAL.add("You blacked out!");
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,7 +381,7 @@ public class BattleUI {
 			}
 			//When opp off the screen then show opponent pokemon animation
 			if (shiftedOpponentIcon && charIndex == characters.length) {
-				g2.drawImage(oppBackImage, 530, 120, 192, 192, null);
+				g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
 				battleCounter++;
 				
 				if(battleCounter == 10) {
@@ -380,7 +395,7 @@ public class BattleUI {
 	
 		//Part 4 - User throws pokemon whilst shifting left 
 		if(opponentPokemonDisplayed && !shownPlayerText) {
-			g2.drawImage(oppBackImage, 530, 120, 192, 192, null);
+			g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
 			
 			char characters[] = introTextAL.get(2).toCharArray();
 			if(charIndex < characters.length) {				
@@ -437,8 +452,8 @@ public class BattleUI {
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
 		
-		g2.drawImage(playerBackImage, 50, 296, 240, 240, null);
-		g2.drawImage(oppBackImage, 530, 120, 192, 192, null);
+		g2.drawImage(playerPokemonImage, 50, 296, 240, 240, null);
+		g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
 		
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
@@ -748,9 +763,44 @@ public class BattleUI {
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	float alpha = 0.0f;
 	
 	private void endingBattle() {
-		gamePanel.setGameState(gamePanel.getPlayState());
+		char characters[] = endingTextAL.get(0).toCharArray();
+		if(charIndex < characters.length) {
+			String s = String.valueOf(characters[charIndex]);					
+			combinedText = combinedText + s;
+			currentDialogue = combinedText;
+			charIndex++;
+		}
+		
+		for(String line : currentDialogue.split("\n")) {
+			g2.drawString(line, 64, 512+64);
+		}
+			
+		if(charIndex == characters.length) {
+			battleCounter++;
+			
+			if(battleCounter == 45) {
+				charIndex = 0;
+				combinedText = "";
+				battleCounter = 0;
+			}
+		}
+		
+		
+		
+		
+		alpha += 0.01f; 
+        if (alpha > 1.0f) {
+            alpha = 1.0f;
+        }
+        
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+        g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		
+		//gamePanel.setGameState(gamePanel.getPlayState());
 	}
 	
 	
@@ -948,18 +998,6 @@ public class BattleUI {
 			
 			oppPokeball = ImageIO.read(getClass().getResourceAsStream("/battleUI/oppPokeBall.png"));
 			
-			//Battle Icons
-			opponentBarIcon = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon.png"));
-			opponentBarIconSilhouette = ImageIO.read(getClass().getResourceAsStream("/battleIcons/RIVAL_icon_silhouette.png"));
-			
-			//Battle Trainers
-			opponentFront = ImageIO.read(getClass().getResourceAsStream("/battleTrainers/rival_front.png"));
-						
-			//Poke 
-			oppBackImage = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/CHARIZARD.png"));
-			playerBackImage = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/PIKACHU.png"));
-			
-			
 			//////////////////////////////////////////////////////////////////////////////
 			
 			//Battle Icons
@@ -968,7 +1006,7 @@ public class BattleUI {
 			
 			//Battle bars
 			playerBar = ImageIO.read(getClass().getResourceAsStream("/battleBars/Player_bar.png"));
-			opponentBar = ImageIO.read(getClass().getResourceAsStream("/battleBars/Rival_bar.png"));
+			
 			
 			//Battle UI
 			textbox = ImageIO.read(getClass().getResourceAsStream("/ui/textbox.png"));

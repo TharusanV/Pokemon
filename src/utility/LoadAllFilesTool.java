@@ -1,9 +1,12 @@
 package utility;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import battle.Move;
 import battle.Pokemon;
@@ -103,12 +106,15 @@ public class LoadAllFilesTool {
 	            String type1 = columns[8].trim(); 
 	            String type2 = columns[9].trim(); 
 	            
+	            BufferedImage frontImage = ImageIO.read(getClass().getResourceAsStream("/battlePokeFront/"+name.toUpperCase()+".png"));;
+	            BufferedImage backImage = ImageIO.read(getClass().getResourceAsStream("/battlePokeBack/"+name.toUpperCase()+".png"));
+	            
 	            if(type2.equals("Null")) {
-	            	Pokemon poke = new Pokemon(name, hp, att, def, spa, spd, speed, type1);
+	            	Pokemon poke = new Pokemon(name, hp, att, def, spa, spd, speed, type1, frontImage, backImage);
 		            pokemonList.add(poke);
 	            }
 	            else {
-	            	Pokemon poke = new Pokemon(name, hp, att, def, spa, spd, speed, type1, type2);
+	            	Pokemon poke = new Pokemon(name, hp, att, def, spa, spd, speed, type1, type2, frontImage, backImage);
 		            pokemonList.add(poke);	
 	            }
 	            
