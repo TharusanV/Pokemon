@@ -89,12 +89,6 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 			
-			
-			//REMOVE LATER
-			if(keyValue == KeyEvent.VK_Z) {
-				gamePanel.setGameState(gamePanel.getPlayState());
-				gamePanel.getBattleUi().resetValues();
-			}
 		}
 		
 		//DIALOGUE STATE

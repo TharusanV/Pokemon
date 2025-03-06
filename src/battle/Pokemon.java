@@ -273,6 +273,24 @@ public class Pokemon {
 		this.backImage = backImage;
 	}
 	
+	public boolean canDoAnyMoves() {
+		for(int i = 0; i<4; i++) {
+			Move move = moves.get(i);
+			
+			if(move.getCurrentPP() > 0) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
+	public boolean checkCertainMove(int index) {
+		if(moves.get(index).getCurrentPP() > 0) {
+			return true;
+		}
+		
+		return false;
+	}
     
 }

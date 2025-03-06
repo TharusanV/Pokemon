@@ -39,35 +39,25 @@ public class LoadAllFilesTool {
 	            */
 	            
 	            String name = columns[0].trim(); 
+	            
 	            String moveType = columns[1].trim();
 	            String category = columns[2].trim();
 	            
 	            int power;
-	            if(columns[3].trim().equals("Null") || columns[3].trim().equals("Infinite")) {
-	                power = 0;
-	            }
-	            else {
-	            	power = Integer.parseInt(columns[3].trim());
-	            }
+	            if(columns[3].trim().equals("null")) {power = 0;}
+	            else {power = Integer.parseInt(columns[3].trim());}
 	            
 	            int acc;
-	            if(columns[4].trim().equals("Null") || columns[4].trim().equals("Infinite")) {
-	                acc = 0;
-	            }
-	            else {
-	            	acc = Integer.parseInt(columns[4].trim());
-	            }
+	            if(columns[4].trim().equals("null")) {acc = 100;}
+	            else {acc = Integer.parseInt(columns[4].trim());}
 	          
 	            
 	            int pp;
-	            if(columns[5].trim().equals("Null") || columns[5].trim().equals("Infinite")) {
-	                pp = 0;
-	            }
-	            else {
-	            	pp = Integer.parseInt(columns[5].trim());
-	            }
+	            if(columns[5].trim().equals("null")) {pp = 100;}
+	            else {pp = Integer.parseInt(columns[5].trim());}
 	            
 	            String description = columns[6].trim();
+	            
 	            
 	            Move move = new Move(name, moveType, category, power, acc, pp, description);
 	            moveList.add(move);
@@ -142,9 +132,6 @@ public class LoadAllFilesTool {
 	        while ((line = br.readLine()) != null) {
 	            String[] columns = line.split(","); 
 	            
-	            //System.out.println(line);
-	            
-	            
 	            int id = Integer.parseInt(columns[0].trim()) - 1;
 	            Pokemon poke = new Pokemon(allPoke.get(id));
 	            
@@ -158,14 +145,18 @@ public class LoadAllFilesTool {
 	            poke.setExp(currentEXP);
 	            
 	            ArrayList<Move> pokesMoves = new ArrayList<Move>();
-	            int m1 = Integer.parseInt(columns[4].trim()) - 1;
-	            int m2 = Integer.parseInt(columns[5].trim()) - 1;
-	            int m3 = Integer.parseInt(columns[6].trim()) - 1;
-	            int m4 = Integer.parseInt(columns[7].trim()) - 1;
+	            int m1 = Integer.parseInt(columns[4].trim()) - 2;
+	            int m2 = Integer.parseInt(columns[5].trim()) - 2;
+	            int m3 = Integer.parseInt(columns[6].trim()) - 2;
+	            int m4 = Integer.parseInt(columns[7].trim()) - 2;
 	            pokesMoves.add(new Move(allMoves.get(m1)));
 	            pokesMoves.add(new Move(allMoves.get(m2)));
 	            pokesMoves.add(new Move(allMoves.get(m3)));
 	            pokesMoves.add(new Move(allMoves.get(m4)));
+	            
+	            //Struggle Added
+	            //pokesMoves.add(new Move(allMoves.get(803 - 2)));
+	            
 	            poke.setAttacks(pokesMoves);
 	            
 	            teamList.add(poke);

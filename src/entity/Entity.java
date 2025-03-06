@@ -280,25 +280,7 @@ public class Entity {
 	
 	
 	
-	public boolean canPlayerDoAnyMoves() {
-		for(int i = 0; i<team.get(selectedPokemonIndex).getAttacks().size(); i++) {
-			Move move = team.get(selectedPokemonIndex).getAttacks().get(i);
-			
-			if(move.getCurrentPP() > 0) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
-	public boolean checkCertainMove(int currentCommand) {
-		if(team.get(selectedPokemonIndex).getAttacks().get(currentCommand).getCurrentPP() > 0) {
-			return true;
-		}
-		
-		return false;
-	}
 	
 	
 	

@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 
 import battle.Move;
 import battle.Pokemon;
+import entity.Entity;
 import entity.Player;
 import entity.Trainer;
 import main.GamePanel;
@@ -34,8 +35,6 @@ public class BattleUI {
 	ArrayList<String> inCombatTextAL = new ArrayList<String>();
 	ArrayList<String> runAttemptTextAL = new ArrayList<String>();
 	ArrayList<String> endingTextAL = new ArrayList<String>();
-	
-	
 	
 	//////	Declaring Asset Variables //////
 	//Battle Start
@@ -74,13 +73,29 @@ public class BattleUI {
 	
 	
 	//////Reset-able Variables //////
+
+	Player playerObj = null;
+	Trainer opponentObj = null;
+	Move opponentMove = null;
+	Move playerMove = null;
+	
+	//ALL States
 	boolean battleIntroTransition = true;
 	boolean battleStartIntro = false;
 	boolean battleStarted = false;
 	boolean battleEnding = false;
 	
-	int battleCounter = 0;
-
+	//Dialogue
+	String currentDialogue = "";
+	int charIndex = 0;
+	String combinedText = "";
+	
+	int introTextIndex = 0;
+	int inCombatTextIndex = 0;
+	int runAttemptTextIndex = 0;
+	
+	
+	
 	int playerBarX = -SCREEN_WIDTH/2;
 	int opponentBarX = SCREEN_WIDTH;
 	int battleBarY = (SCREEN_HEIGHT / 2) - 130;
@@ -91,8 +106,6 @@ public class BattleUI {
 	int vs_Y = 330;
 	int vs_Width = 122;
 	int vs_Height = 108;
-	
-	int countdown1 = 0;
 	
 	int topRectIntro = 0;
 	int bottomRectIntro = 320;
@@ -113,42 +126,13 @@ public class BattleUI {
 	int runCommandX = fightCommandX + commandWidth - 7;
 	int runCommandY = fightCommandY + commandHeight - 6;
 	
-	public int currentCommand = 0;
-	boolean commandsBoolean = true;
-	
-	boolean fightBoolean = false;
-	boolean bagBoolean = false;
-	boolean pokemonBoolean = false;
-	boolean runBoolean = false;
-	
-	boolean playingMoveBoolean = false;
-	int playerSelectedMoveIndex = 0;
-	
-	String currentDialogue = "";
-	int charIndex = 0;
-	String combinedText = "";
-	
-	Player playerObj = null;
-	Trainer opponentObj = null;
-	
-	int introTextIndex = 0;
-	int inCombatTextIndex = 0;
-	int runAttemptTextIndex = 0;
-	
-	Move opponentMove = null;
-	Move playerMove = null;
-	
-	int opponentDamageToPlayer = 0;
-	int playerDamageToOpponent = 0;
-	
-	boolean playerIsFirst = false;
-	
 	int playerHealthBarWidth = 152;
 	int oppHealthBarWidth = 152;
 	
 	int newHealthBarWidthP = 152;
 	int newHealthBarWidthO = 152;
 	
+	//Intro Booleans
 	boolean barsInPlace = false;
 	boolean iconsInPlace = false;
 	
@@ -162,7 +146,36 @@ public class BattleUI {
 	boolean shiftedOpponentIcon = false;
 	boolean shownPlayerText = false;
 	
-	int turnIndex = 0;
+	int transitionIntroTimer = 0;
+	
+	int introTimer1 = 0;
+	int introTimer2 = 0;
+	int introTimer3 = 0;
+
+	
+	//Fight Booleans
+	boolean commandsBoolean = true;
+	boolean fightBoolean = false;
+	boolean bagBoolean = false;
+	boolean pokemonBoolean = false;
+	boolean runBoolean = false;
+	boolean playingMoveBoolean = false;
+	
+	public int currentCommand = 0;
+	
+	int playerAttackIndex = 0;
+	int opponentDamageToPlayer = 0;
+	int playerDamageToOpponent = 0;
+	boolean playerIsFirst = false;
+	int turnCounter = 0;
+
+	//Ending variables
+	float alpha = 0.0f;
+	boolean playerLost = false;
+	boolean opponentLost = false;
+	int endingIndex = 0;
+	int endingCounter = 0;
+	int endingDialogueIndex = 0;
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -199,7 +212,9 @@ public class BattleUI {
 			
 		runAttemptTextAL.add("You cannot run from a Trainer battle!");
 		
-		endingTextAL.add("You are out of usable Pokémon!");
+		endingTextAL.add("You are out of usable pokemon!");
+		endingTextAL.add("You paid out 416 to the winner.");
+		endingTextAL.add("... ... ... ...");
 		endingTextAL.add("You blacked out!");
 	}
 	
@@ -231,7 +246,6 @@ public class BattleUI {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
-	
 	public void startBattle() {
 		//Transparent BG
 		Color c = new Color(0, 0, 0, 100);
@@ -254,49 +268,42 @@ public class BattleUI {
 		    opponentIconBarX -= 10;
 		    if (playerIconBarX >= 60) {iconsInPlace = true;}
 		}
-
-		if (barsInPlace && iconsInPlace && countdown1 != 30) {
-		    g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
-		    g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
-		    g2.drawImage(vsIcon, vs_X, vs_Y, vs_Width, vs_Height, null);
-		    
-		    countdown1++;
-		} 
-		else if (countdown1 == 30) { // Ensure this only triggers when countdown1 reaches 30
-		    g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
-		    g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
-		    g2.drawImage(vsIcon, vs_X, vs_Y, vs_Width, vs_Height, null);
-
-		    vs_Width += 4;
-		    vs_Height += 4;
+		
+		else if(barsInPlace && iconsInPlace && transitionIntroTimer != 30) { //Wait 30 frames
+			g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(vsIcon,vs_X,vs_Y,vs_Width,vs_Height,null);
+			
+			transitionIntroTimer++;
+		}
+		else if(transitionIntroTimer == 30) {
+			g2.drawImage(playerBarIcon, playerIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(opponentBarIcon, opponentIconBarX, battleBarY + 8, 256, 178, null);
+			g2.drawImage(vsIcon,vs_X,vs_Y,vs_Width,vs_Height,null);
+			
+			vs_Width += 4;
+			vs_Height += 4;
 		    vs_X -= 4 / 2;
 		    vs_Y -= 4 / 2;
-
-		    if (vs_Width >= 600) {
-		    	countdown1 = 0;
+		    
+		    if(vs_Width >= 600) {
+		    	transitionIntroTimer = 0;
 		    	barsInPlace = false; 
 		    	iconsInPlace = false;
 		        battleStartIntro = true;
 		        battleIntroTransition = false;
-		    }
+			}
 		}
 
 	}
-	
-	
-	
+		
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-	
-	
-
-	
 	public void battleIntro() {		
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
-
+		
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
@@ -312,6 +319,7 @@ public class BattleUI {
 	        
 	        if(bottomRectIntro == 640) {rectanglesInPlace = true;}
 		}
+		
 		
 		if(!basesInPlace) {
 			g2.drawImage(playerBack1, playerBackX, 272, 240, 240, null);
@@ -343,12 +351,12 @@ public class BattleUI {
 			}
 				
 			if(charIndex == characters.length) {
-				battleCounter++;
+				introTimer1++;
 				
-				if(battleCounter == 45) {
+				if(introTimer1 == 45) {
 					charIndex = 0;
 					combinedText = "";
-					battleCounter = 0;
+					introTimer1 = 0;
 					shownOpponentText = true;
 				}
 			}
@@ -382,12 +390,12 @@ public class BattleUI {
 			//When opp off the screen then show opponent pokemon animation
 			if (shiftedOpponentIcon && charIndex == characters.length) {
 				g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
-				battleCounter++;
+				introTimer2++;
 				
-				if(battleCounter == 10) {
+				if(introTimer2 == 10) {
 					charIndex = 0;
 					combinedText = "";
-					battleCounter = 0;
+					introTimer2 = 0;
 					opponentPokemonDisplayed = true;
 				}
 			}
@@ -412,30 +420,33 @@ public class BattleUI {
 			}
 			
 			if(charIndex == characters.length) {
-				battleCounter++;
+				introTimer3++;
 				int animationSpeed = 6; 
 				BufferedImage[] playerBackFrames = { playerBack1, playerBack2, playerBack3, playerBack4, playerBack5 };
 				int totalFrames = playerBackFrames.length;
-				if (battleCounter / animationSpeed < totalFrames) {g2.drawImage(playerBackFrames[battleCounter / animationSpeed], playerBackX, 272, 240, 240, null);}
+				if (introTimer3 / animationSpeed < totalFrames) {g2.drawImage(playerBackFrames[introTimer3 / animationSpeed], playerBackX, 272, 240, 240, null);}
 				else {
 					g2.drawImage(playerBack1, playerBackX, 272, 240, 240, null);
+					g2.drawImage(playerPokemonImage, 50, 296, 240, 240, null);
 				}
-				
 				
 				if (!shiftedTrainerIcons) {
 					playerBackX -= 10;
-				    if(playerBackX == -200) {shiftedTrainerIcons = true;}
+				    if(playerBackX == -250) {shiftedTrainerIcons = true;}
 				}
 				
 				if(shiftedTrainerIcons == true) {
 					charIndex = 0;
 					combinedText = "";
-					battleCounter = 0;
+					introTimer3 = 0;
 					shownPlayerText = true;
 				}
 			}	
 		}
 		if(shownPlayerText) {
+			introTimer1 = 0;
+			introTimer2 = 0;
+			introTimer3 = 0;
 			introTextIndex = 0;
 			battleStarted = true;
 			battleStartIntro = false;
@@ -443,25 +454,18 @@ public class BattleUI {
 		
 	}
 	
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void inBattle() {
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
-		
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
-		
 		g2.drawImage(playerPokemonImage, 50, 296, 240, 240, null);
 		g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
-		
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
-		healthBarsUI();
 		
 		if(commandsBoolean == true) {
-			g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
-			
 			battleShowCommands();
 		}
 		else if(fightBoolean == true) {
@@ -474,12 +478,14 @@ public class BattleUI {
 		else if(runBoolean == true) {
 			runCommand_Open();
 		}
-		
-
 	}
 	
 	
 	public void battleShowCommands() {
+		g2.drawImage(battleOverlayTextbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		healthBarPlayerUI();
+		healthBarOppUI();
+		
 		if(currentCommand == 0) {
 			g2.drawImage(bagCommand, bagCommandX, bagCommandY, commandWidth, commandHeight, null);
 			g2.drawImage(pokemonCommand, pokemonCommandX, pokemonCommandY, commandWidth, commandHeight, null);
@@ -523,37 +529,20 @@ public class BattleUI {
 	
 	
 	public void fightCommand_Open() {
+		//Images
 		g2.drawImage(battleOverlayFight, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
-
+		healthBarPlayerUI();
+		healthBarOppUI();
+		
 		// Set color and fill rectangles
 		g2.setColor(Color.WHITE);
-		g2.fillRect(60, 531, 190, 39); // Top left
-		g2.fillRect(360, 531, 190, 39); // Top right
-		g2.fillRect(60, 586, 190, 39); // Bot left
-		g2.fillRect(360, 586, 190, 39); // Bot right
+		g2.fillRect(60, 531, 190, 39); g2.fillRect(360, 531, 190, 39); 
+		g2.fillRect(60, 586, 190, 39); g2.fillRect(360, 586, 190, 39); 
 
-		g2.setColor(Color.BLACK);
-		battlePPFont = pokeFont.deriveFont(16F);
-		g2.setFont(battlePPFont);
-		FontMetrics metrics = g2.getFontMetrics();
+		// Draw Moves into rectangles
+		showAllMovesUI();
 
-		int[][] rects = { {60, 531}, {360, 531}, {60, 586}, {360, 586} };
-	
-		for (int i = 0; i < 4; i++) {
-			if(currentCommand == i) {g2.setColor(Color.RED);}
-			else {g2.setColor(Color.BLACK);}	
-			
-		    String text = playerObj.getCurrentPokemon().getAttacks().get(i).getName();
-		    int textWidth = metrics.stringWidth(text);
-		    int textHeight = metrics.getAscent(); // Gets the height above baseline
-
-		    int centerX = rects[i][0] + (190 - textWidth) / 2; 
-		    int centerY = rects[i][1] + ((39 - textHeight) / 2) + textHeight; 
-		    
-		    g2.drawString(text, centerX, centerY);
-		}
-
-
+		// Display type of move and PP
 		g2.drawImage(movesTypeHM.get(playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getTypeOfMove()), 655, 512+28, 64+24, 28+6, null);
 		
 		battlePPFont = pokeFont.deriveFont(18F);
@@ -561,15 +550,19 @@ public class BattleUI {
 		g2.setColor(Color.BLACK);
 		g2.drawString("PP: " + playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getCurrentPP() + "/" + playerObj.getCurrentPokemon().getAttacks().get(currentCommand).getPPMax(), 633, 512+88);
 	
-		
+		//Enter Pressed
 		if(gamePanel.getKeyHandler().enterPressed == true) {
-			if(playerObj.canPlayerDoAnyMoves() && playerObj.checkCertainMove(currentCommand)) {
-				playerSelectedMoveIndex = currentCommand;
+			if(playerObj.getCurrentPokemon().canDoAnyMoves()) { //If player's pokemon can do any moves
+				if(playerObj.getCurrentPokemon().checkCertainMove(currentCommand)) {//If the current selected pokemon has PP
+					playerAttackIndex = currentCommand;
+					turnPrep();
+					playingMoveBoolean = true;
+					fightBoolean = false;
+				}
+			}
+			else { //Means the player's current pokemon can't use any moves, so they use 'struggle'
+				playerAttackIndex = 4;
 				turnPrep();
-				
-				//System.out.println(opponentObj.getCurrentPokemon().getName() + " - " + playerObj.getCurrentPokemon().getName());
-				//System.out.println(playerDamageToOpponent + " - " + opponentDamageToPlayer);
-				
 				playingMoveBoolean = true;
 				fightBoolean = false;
 			}
@@ -577,6 +570,8 @@ public class BattleUI {
 			gamePanel.getKeyHandler().enterPressed = false;
 		}
 		
+		
+		//Escape Pressed
 		if(gamePanel.getKeyHandler().escapePressed == true) {
 			commandsBoolean = true;
 			fightBoolean = false;
@@ -585,12 +580,15 @@ public class BattleUI {
 		}
 	}
 	
-	
+
+
 	
 	public void fightCommand_PlayOutMove() {
 		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		healthBarPlayerUI();
+		healthBarOppUI();
 		
-		if(turnIndex == 0) {
+		if(turnCounter == 0) {
 			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
 			
 			if(charIndex < characters.length) {
@@ -601,112 +599,56 @@ public class BattleUI {
 			}
 				
 			if(charIndex == characters.length) {
-				if(playerIsFirst == true) {
-					if(oppHealthBarWidth == newHealthBarWidthO) {
-						opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
-						charIndex = 0;
-						combinedText = "";
-						inCombatTextIndex++;
-						turnIndex++;
-					}
-					
-					oppHealthBarWidth--;
-				}
-				else {
-					if(playerHealthBarWidth == newHealthBarWidthP) {
-						playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
-						charIndex = 0;
-						combinedText = "";
-						inCombatTextIndex++;
-						turnIndex++;
-					}
-					
-					playerHealthBarWidth--;	
-				}
+				if(playerIsFirst == true) {playerHitOpponent();}
+				else {opponentHitPlayer();}
 			}
 				
-			for(String line : currentDialogue.split("\n")) {
-				g2.drawString(line, 64, 512+64);
+			for(String line : currentDialogue.split("\n")) {g2.drawString(line, 64, 512+64);}
+		}
+		
+		else if(turnCounter == 1) {
+			if(playerObj.getCurrentPokemon().hasFainted() == false && opponentObj.getCurrentPokemon().hasFainted() == false) {
+				char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
+				
+				if(charIndex < characters.length) {
+					String s = String.valueOf(characters[charIndex]);
+					combinedText = combinedText + s;
+					currentDialogue = combinedText;
+					charIndex++;
+				}
+					
+				if(charIndex == characters.length) {
+					if(playerIsFirst == true) {opponentHitPlayer();}
+					else {playerHitOpponent();}
+				
+				}
+					
+				for(String line : currentDialogue.split("\n")) {g2.drawString(line, 64, 512+64);}
+			}	
+			else {
+				if(playerObj.getCurrentPokemon().hasFainted()) {
+					checkForAvailablePokemon(playerObj);
+				}
+				else if(opponentObj.getCurrentPokemon().hasFainted()) {
+					checkForAvailablePokemon(opponentObj);
+				}
 			}
 		}
-		else if(playerObj.getCurrentPokemon().hasFainted() == false && opponentObj.getCurrentPokemon().hasFainted() == false  && turnIndex == 1) {
-			char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
-			
-			if(charIndex < characters.length) {
-				String s = String.valueOf(characters[charIndex]);
-				combinedText = combinedText + s;
-				currentDialogue = combinedText;
-				charIndex++;
-			}
-				
-			if(charIndex == characters.length) {
-				if(playerIsFirst == false) {
-					if(oppHealthBarWidth == newHealthBarWidthO) {
-						opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
-						charIndex = 0;
-						combinedText = "";
-						inCombatTextIndex++;
-						turnIndex++;
-					}
-					
-					oppHealthBarWidth--;
-				}
-				else {
-					if(playerHealthBarWidth == newHealthBarWidthP) {
-						playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
-						charIndex = 0;
-						combinedText = "";
-						inCombatTextIndex++;
-						turnIndex++;
-					}
-					
-					playerHealthBarWidth--;	
-				}
-			}
-				
-			for(String line : currentDialogue.split("\n")) {
-				g2.drawString(line, 64, 512+64);
-			}
-		}
-		else if((playerObj.getCurrentPokemon().hasFainted() || opponentObj.getCurrentPokemon().hasFainted())  && (turnIndex == 1 || turnIndex == 2)) {
+		else if(turnCounter == 2) {
 			if(playerObj.getCurrentPokemon().hasFainted()) {
-				if(playerObj.hasPokemonWithHealth()) {
-					playerObj.setCurrentPokemon(playerObj.findFirstMemberWithHealth());
-					inCombatTextIndex = 0;
-					turnIndex = 0;
-					commandsBoolean = true;
-					playingMoveBoolean = false;
-				}
-				else {
-					inCombatTextIndex = 0;
-					turnIndex = 0;
-					playingMoveBoolean = false;
-					battleStarted = false;
-					battleEnding = true;
-				}
+				checkForAvailablePokemon(playerObj);
 			}
-			
-			if(opponentObj.getCurrentPokemon().hasFainted()) {
-				if(opponentObj.hasPokemonWithHealth()) {
-					opponentObj.setCurrentPokemon(opponentObj.findFirstMemberWithHealth());
-					inCombatTextIndex = 0;
-					turnIndex = 0;
-					commandsBoolean = true;
-					playingMoveBoolean = false;
-				}
-				else {
-					inCombatTextIndex = 0;
-					turnIndex = 0;
-					playingMoveBoolean = false;
-					battleStarted = false;
-					battleEnding = true;
-					
-				}
+			else if(opponentObj.getCurrentPokemon().hasFainted()) {
+				checkForAvailablePokemon(opponentObj);
+			}
+			else {
+				turnCounter++;
 			}
 		}
 		else {
 			inCombatTextIndex = 0;
-			turnIndex = 0;
+			turnCounter = 0;
+			currentCommand = 0;
 			commandsBoolean = true;
 			playingMoveBoolean = false;
 		}
@@ -763,49 +705,131 @@ public class BattleUI {
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	float alpha = 0.0f;
 	
 	private void endingBattle() {
-		char characters[] = endingTextAL.get(0).toCharArray();
-		if(charIndex < characters.length) {
-			String s = String.valueOf(characters[charIndex]);					
-			combinedText = combinedText + s;
-			currentDialogue = combinedText;
-			charIndex++;
+		if(playerLost) {
+			playerLost_EndingBattle();
 		}
 		
-		for(String line : currentDialogue.split("\n")) {
-			g2.drawString(line, 64, 512+64);
+		if(opponentLost) {
+			
 		}
+		
+	}
+	
+	private void playerLost_EndingBattle(){
+		//Images
+		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
+		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
+		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
+		g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
+		healthBarOppUI();
+		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		
+		if(endingIndex == 0) {
+			//Dialogue
+			char characters[] = endingTextAL.get(endingDialogueIndex).toCharArray();
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);					
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
 			
-		if(charIndex == characters.length) {
-			battleCounter++;
+			for(String line : currentDialogue.split("\n")) {
+				g2.drawString(line, 64, 512+64);
+			}
 			
-			if(battleCounter == 45) {
-				charIndex = 0;
-				combinedText = "";
-				battleCounter = 0;
+			if(charIndex == characters.length) {
+				endingCounter++;
+				
+				if(endingCounter == 60) {
+					if(endingDialogueIndex != 3) {
+						charIndex = 0;
+						combinedText = "";
+						endingCounter = 0;
+						endingDialogueIndex++;
+						
+					}
+					else {
+						charIndex = 0;
+						combinedText = "";
+						endingCounter = 0;
+						endingDialogueIndex = 0;
+						endingIndex = 1;
+					}
+				}
 			}
 		}
-		
-		
-		
-		
-		alpha += 0.01f; 
-        if (alpha > 1.0f) {
-            alpha = 1.0f;
-        }
-        
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		
-		//gamePanel.setGameState(gamePanel.getPlayState());
+		else {
+			alpha += 0.01f; 
+	        if (alpha > 1.0f) {
+	        	alpha = 1.0f;
+	        	
+	        	endingCounter++;
+	        	
+	        	if(endingCounter == 60) {
+	        		battleEnding = false;
+		        	playerLost = false;
+		        	endingIndex = 0;
+		        	endingCounter = 0;
+		        	gamePanel.setGameState(gamePanel.getPlayState());
+	        	}
+	        }
+	        
+	        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+	        g2.setColor(Color.BLACK);
+	        g2.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
 	}
+	
+	
+	
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	private void showAllMovesUI() {
+		g2.setColor(Color.BLACK);
+		battlePPFont = pokeFont.deriveFont(16F);
+		g2.setFont(battlePPFont);
+		FontMetrics metrics = g2.getFontMetrics();
+
+		int[][] rects = { {60, 531}, {360, 531}, {60, 586}, {360, 586} };
+		
+		if(playerObj.getCurrentPokemon().canDoAnyMoves()) {
+			for (int i = 0; i < 4; i++) {
+				if(currentCommand == i) {g2.setColor(Color.RED);}
+				else {g2.setColor(Color.BLACK);}	
+				
+			    String text = playerObj.getCurrentPokemon().getAttacks().get(i).getName();
+			    int textWidth = metrics.stringWidth(text);
+			    int textHeight = metrics.getAscent(); // Gets the height above baseline
+
+			    int centerX = rects[i][0] + (190 - textWidth) / 2; 
+			    int centerY = rects[i][1] + ((39 - textHeight) / 2) + textHeight; 
+			    
+			    g2.drawString(text, centerX, centerY);
+			}
+		}
+		else {
+			for (int i = 0; i < 4; i++) {
+				if(currentCommand == i) {g2.setColor(Color.RED);}
+				else {g2.setColor(Color.BLACK);}	
+				
+			    String text = playerObj.getCurrentPokemon().getAttacks().get(4).getName();
+			    int textWidth = metrics.stringWidth(text);
+			    int textHeight = metrics.getAscent(); // Gets the height above baseline
+
+			    int centerX = rects[i][0] + (190 - textWidth) / 2; 
+			    int centerY = rects[i][1] + ((39 - textHeight) / 2) + textHeight; 
+			    
+			    g2.drawString(text, centerX, centerY);
+			}
+		}
+		
+	}
 	
 	public void turnPrep() {
 		inCombatTextAL.clear();
@@ -815,7 +839,7 @@ public class BattleUI {
 			opponentMove = opponentObj.getCurrentPokemon().getAttacks().get(opponentMoveIndex);
 		}
 				
-		playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerSelectedMoveIndex);
+		playerMove = playerObj.getCurrentPokemon().getAttacks().get(playerAttackIndex);
 				
 		opponentDamageToPlayer = opponentMove.calculateDamage(opponentObj.getCurrentPokemon(), playerObj.getCurrentPokemon());
 		playerDamageToOpponent = playerMove.calculateDamage(playerObj.getCurrentPokemon(), opponentObj.getCurrentPokemon());
@@ -842,87 +866,61 @@ public class BattleUI {
 	}
 	
 	
+	private void playerHitOpponent() {
+		if(oppHealthBarWidth == newHealthBarWidthO) {
+			opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
+			charIndex = 0;
+			combinedText = "";
+			inCombatTextIndex++;
+					
+			turnCounter++;
+		}
+				
+		oppHealthBarWidth--;	
+	}
 	
-	
-	public void updateHealthBarOpp() {
-		int targetHealth = opponentObj.getCurrentPokemon().getHealth() - playerDamageToOpponent;
-		int targetWidthO = (targetHealth * oppHealthBarWidth) / opponentObj.getCurrentPokemon().getMaxHealth();
+	private void opponentHitPlayer() {
+		if(playerHealthBarWidth == newHealthBarWidthP) {
+			playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
+			charIndex = 0;
+			combinedText = "";
+			inCombatTextIndex++;
+			
+			turnCounter++;
+		}
 		
-		for(int i = oppHealthBarWidth; i > targetWidthO; i--) {
-			oppHealthBarWidth = i;
+		playerHealthBarWidth--;	
+	}
+	
+	
+	private void checkForAvailablePokemon(Entity trainer) {
+		if(trainer.getCurrentPokemon().hasFainted()) {
+			if(trainer.hasPokemonWithHealth()) {
+				trainer.setCurrentPokemon(trainer.findFirstMemberWithHealth());
+				inCombatTextIndex = 0;
+				turnCounter=0;
+				commandsBoolean = true;
+				playingMoveBoolean = false;
+			}
+			else {
+				inCombatTextIndex = 0;
+				turnCounter = 0;
+				playingMoveBoolean = false;
+				battleStarted = false;
+				battleEnding = true;
+				
+				if(trainer instanceof Player) {
+					playerLost = true;
+				}
+				else {
+					opponentLost = true;
+				}
+				
+			}
 		}
 	}
 	
 
-	
-	
-	
-	///////////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	public void resetValues() {
-		battleIntroTransition = true;
-		battleStartIntro = false;
-		battleStarted = false;
-		
-		battleCounter = 0;
-		
-		playerBarX = -SCREEN_WIDTH/2;
-		opponentBarX = SCREEN_WIDTH;
-		battleBarY = (SCREEN_HEIGHT / 2) - 130;
-		playerIconBarX = -380;
-		opponentIconBarX = 920;
-		
-		vs_X = SCREEN_WIDTH/2 - (122/2);
-		vs_Y = 330;
-		vs_Width = 122;
-		vs_Height = 108;
-		
-		countdown1 = 0;
-		
-		//Battle Intro
-		topRectIntro = 0;
-		bottomRectIntro = 320;
-		
-		basePlayerX = 750;
-		baseOpponentX = -440;
-		playerBackX = 950;
-		opponentFrontX = -400;	
-		
-		currentCommand = 0;
-		
-		commandsBoolean = true;
-		fightBoolean = false;
-		bagBoolean = false;
-		pokemonBoolean = false;
-		runBoolean = false;
-	}
-	
-	
-	
-	public void drawDialogueSingle(ArrayList<String> p_arrayList) {
-		char characters[] = p_arrayList.get(inCombatTextIndex).toCharArray();
-		if(charIndex < characters.length) {
-			String s = String.valueOf(characters[charIndex]);
-			combinedText = combinedText + s;
-			currentDialogue = combinedText;
-			charIndex++;
-		}
-			
-		if(gamePanel.getKeyHandler().enterPressed == true) {
-			charIndex = 0;
-			combinedText = "";
-			
-			inCombatTextIndex++;
-			gamePanel.getKeyHandler().enterPressed = false;
-		}
-			
-		for(String line : currentDialogue.split("\n")) {
-			g2.drawString(line, 64, 512+64);
-		}
-	}
-	
-	
 	////////////////////////////////////////////////////////////////////////////
 	
 	public void lineUpUI() {
@@ -958,22 +956,32 @@ public class BattleUI {
 	
 	
 	
-	public void healthBarsUI() {
-		g2.drawImage(opponentHealthBox, 0, 50, 410, 122, null);
+	public void healthBarPlayerUI() {
 		g2.drawImage(userHealthBox, SCREEN_WIDTH - 410, 340, 410, 122, null);
 		
-		g2.drawString("Lv" + Integer.toString(opponentObj.getCurrentPokemon().getLevel()), 250, 110);
 		g2.drawString("Lv" + Integer.toString(playerObj.getCurrentPokemon().getLevel()), 670, 400);
 		
 		g2.setColor(Color.GREEN);
-		g2.fillRect(186, 129, oppHealthBarWidth, 12);
 		g2.fillRect(604, 419, playerHealthBarWidth, 12);
 		
 		pokeFont = pokeFont.deriveFont(Font.BOLD, 18F);
 		g2.setColor(Color.BLACK);
 		g2.setFont(pokeFont);
-		g2.drawString(opponentObj.getCurrentPokemon().getName().toUpperCase(), 10, 110);
 		g2.drawString(playerObj.getCurrentPokemon().getName().toUpperCase(), 440, 400);
+	}
+	
+	public void healthBarOppUI() {
+		g2.drawImage(opponentHealthBox, 0, 50, 410, 122, null);
+		
+		g2.drawString("Lv" + Integer.toString(opponentObj.getCurrentPokemon().getLevel()), 250, 110);
+		
+		g2.setColor(Color.GREEN);
+		g2.fillRect(186, 129, oppHealthBarWidth, 12);
+		
+		pokeFont = pokeFont.deriveFont(Font.BOLD, 18F);
+		g2.setColor(Color.BLACK);
+		g2.setFont(pokeFont);
+		g2.drawString(opponentObj.getCurrentPokemon().getName().toUpperCase(), 10, 110);
 	}
 	
 	
@@ -1104,6 +1112,129 @@ public class BattleUI {
 		movesTypeHM.put("Normal", normalTypeIcon);
     }
 
+    
+    
+    
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public void resetValues() {
+		playerObj = null;
+		opponentObj = null;
+		opponentMove = null;
+		playerMove = null;
+		
+		//ALL States
+		battleIntroTransition = true;
+		battleStartIntro = false;
+		battleStarted = false;
+		battleEnding = false;
+		
+		//Dialogue
+		currentDialogue = "";
+		charIndex = 0;
+		combinedText = "";
+		
+		 introTextIndex = 0;
+		 inCombatTextIndex = 0;
+		 runAttemptTextIndex = 0;
+		
+		
+		
+		 playerBarX = -SCREEN_WIDTH/2;
+		 opponentBarX = SCREEN_WIDTH;
+		 battleBarY = (SCREEN_HEIGHT / 2) - 130;
+		 playerIconBarX = -380;
+		 opponentIconBarX = 920;
+		
+		 vs_X = SCREEN_WIDTH/2 - (122/2);
+		 vs_Y = 330;
+		 vs_Width = 122;
+		 vs_Height = 108;
+		
+		 topRectIntro = 0;
+		 bottomRectIntro = 320;
+		
+		 basePlayerX = 750;
+		 baseOpponentX = -440;
+		 playerBackX = 950;
+		 opponentFrontX = -400;
+		
+		 commandWidth = SCREEN_WIDTH / 4;
+		 commandHeight = 60;
+		 fightCommandX = 400;
+		 fightCommandY = 522;
+		 bagCommandX = fightCommandX + commandWidth - 7;
+		 bagCommandY = fightCommandY;
+		 pokemonCommandX = fightCommandX;
+		 pokemonCommandY = fightCommandY + commandHeight - 6;
+		 runCommandX = fightCommandX + commandWidth - 7;
+		 runCommandY = fightCommandY + commandHeight - 6;
+		
+		 playerHealthBarWidth = 152;
+		 oppHealthBarWidth = 152;
+		
+		 newHealthBarWidthP = 152;
+		 newHealthBarWidthO = 152;
+		
+		//Intro Booleans
+		barsInPlace = false;
+		iconsInPlace = false;
+		
+		basesInPlace = false;
+		rectanglesInPlace = false;
+		
+		shiftedTrainerIcons = false;
+		
+		shownOpponentText = false;
+		opponentPokemonDisplayed = false;
+		shiftedOpponentIcon = false;
+		shownPlayerText = false;
+		
+		transitionIntroTimer = 0;
+		
+		introTimer1 = 0;
+		introTimer2 = 0;
+		introTimer3 = 0;
+
+		
+		//Fight Booleans
+		commandsBoolean = true;
+		fightBoolean = false;
+		bagBoolean = false;
+		pokemonBoolean = false;
+		runBoolean = false;
+		playingMoveBoolean = false;
+		
+		currentCommand = 0;
+		
+		playerAttackIndex = 0;
+		opponentDamageToPlayer = 0;
+		playerDamageToOpponent = 0;
+		playerIsFirst = false;
+		turnCounter = 0;
+
+		//Ending variables
+		alpha = 0.0f;
+		playerLost = false;
+		opponentLost = false;
+		endingIndex = 0;
+		endingCounter = 0;
+		endingDialogueIndex = 0;
+	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 	public Player getPlayerObj() {
 		return playerObj;
