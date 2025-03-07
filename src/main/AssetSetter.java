@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+
 import entity.NPC;
 import entity.Trainer;
 
@@ -29,7 +31,10 @@ public class AssetSetter {
 		bills_dialogues[0][1] = "Bill: Have  Fun!";
 		gamePanel.getNpc()[0].setDialogue(bills_dialogues);
 		
-		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "Job Search", true, "right");
+		ArrayList<String> rivalLostAL = new ArrayList<String>();
+		rivalLostAL.add("JobSearch: Your hired!");
+		rivalLostAL.add("Your next on the list after Tharusan!");
+		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right", rivalLostAL);
 		gamePanel.getNpc()[1].worldX_pos = 430 * gamePanel.scale;
 		gamePanel.getNpc()[1].worldY_pos = 550 * gamePanel.scale;
 		String rival_dialogues[][] = new String[20][20];

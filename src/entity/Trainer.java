@@ -17,12 +17,14 @@ public class Trainer extends Entity {
 	private boolean canBattle;
 	private String name;
 	
+	private ArrayList<String> inBattleLostTextAL; 
+	
 	BufferedImage barIcon;
 	BufferedImage barIconSilhouette;
 	BufferedImage frontIcon;
 	BufferedImage bar;
 	
-	public Trainer(GamePanel gamePanel, String folderName, String character, String p_name, boolean p_canBattle, String p_startingDirection) {
+	public Trainer(GamePanel gamePanel, String folderName, String character, String p_name, boolean p_canBattle, String p_startingDirection, ArrayList<String> p_loseTextAL) {
 		super(gamePanel);
 		
 		speed = 1;
@@ -32,9 +34,12 @@ public class Trainer extends Entity {
 		getCharacterImage(folderName, character);
 		
 		this.canBattle = p_canBattle;
-		this.setName(p_name);
+		this.name = p_name;
+		this.inBattleLostTextAL = p_loseTextAL; 
+		
 		
 		loadTrainerImages(character);
+		
 	}
 	
 	public void update() {
@@ -43,7 +48,7 @@ public class Trainer extends Entity {
 	
 
 	public void speak() {
-		if(dialogues[0][0] != null) {
+		if(dialogues[0][0] != null && canBattle && gamePanel.getPlayer().hasPokemonWithHealth()) {
 			
 			//Do NPC stuff
 			facePlayer();
@@ -100,8 +105,14 @@ public class Trainer extends Entity {
 	}
 	
 	
-	
-	
+	public ArrayList<String> getInBattleLostTextAL() {
+		return inBattleLostTextAL;
+	}
+
+	public void setInBattleLostTextAL(ArrayList<String> inBattleLostTextAL) {
+		this.inBattleLostTextAL = inBattleLostTextAL;
+	}
+
 	public BufferedImage getBarIcon() {
 		return barIcon;
 	}
@@ -133,6 +144,8 @@ public class Trainer extends Entity {
 	public void setBar(BufferedImage bar) {
 		this.bar = bar;
 	}
+	
+	
 
 	private void loadTrainerImages(String name) {
 		try {

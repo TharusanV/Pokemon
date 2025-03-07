@@ -34,7 +34,8 @@ public class BattleUI {
 	ArrayList<String> introTextAL = new ArrayList<String>();
 	ArrayList<String> inCombatTextAL = new ArrayList<String>();
 	ArrayList<String> runAttemptTextAL = new ArrayList<String>();
-	ArrayList<String> endingTextAL = new ArrayList<String>();
+	ArrayList<String> endingTextAL_oppWin = new ArrayList<String>();
+	ArrayList<String> endingTextAL_playerWin = new ArrayList<String>();
 	
 	//////	Declaring Asset Variables //////
 	//Battle Start
@@ -94,7 +95,8 @@ public class BattleUI {
 	int inCombatTextIndex = 0;
 	int runAttemptTextIndex = 0;
 	
-	
+	int playerPokemonY = 296;
+	int opponentPokemonY = 120;
 	
 	int playerBarX = -SCREEN_WIDTH/2;
 	int opponentBarX = SCREEN_WIDTH;
@@ -193,7 +195,8 @@ public class BattleUI {
 		introTextAL.clear();
 		inCombatTextAL.clear();
 		runAttemptTextAL.clear();
-		endingTextAL.clear();
+		endingTextAL_oppWin.clear();
+		endingTextAL_playerWin.clear();
 		
 		opponentBarIcon =  opponentObj.getBarIcon();
 		opponentBarIconSilhouette = opponentObj.getBarIconSilhouette();
@@ -212,10 +215,15 @@ public class BattleUI {
 			
 		runAttemptTextAL.add("You cannot run from a Trainer battle!");
 		
-		endingTextAL.add("You are out of usable pokemon!");
-		endingTextAL.add("You paid out 416 to the winner.");
-		endingTextAL.add("... ... ... ...");
-		endingTextAL.add("You blacked out!");
+		endingTextAL_oppWin.add("You are out of usable pokemon!");
+		endingTextAL_oppWin.add("You paid out 416 to the winner.");
+		endingTextAL_oppWin.add("... ... ... ...");
+		endingTextAL_oppWin.add("You blacked out!");
+		
+		endingTextAL_playerWin.add("You defeated " + opponentObj.getName());
+		for(int i = 0; i < opponentObj.getInBattleLostTextAL().size(); i++) {
+			endingTextAL_playerWin.add(opponentObj.getInBattleLostTextAL().get(i));
+		}
 	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +397,7 @@ public class BattleUI {
 			}
 			//When opp off the screen then show opponent pokemon animation
 			if (shiftedOpponentIcon && charIndex == characters.length) {
-				g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
+				g2.drawImage(oppPokemonImage, 530, opponentPokemonY, 192, 192, null);
 				introTimer2++;
 				
 				if(introTimer2 == 10) {
@@ -403,7 +411,7 @@ public class BattleUI {
 	
 		//Part 4 - User throws pokemon whilst shifting left 
 		if(opponentPokemonDisplayed && !shownPlayerText) {
-			g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
+			g2.drawImage(oppPokemonImage, 530, opponentPokemonY, 192, 192, null);
 			
 			char characters[] = introTextAL.get(2).toCharArray();
 			if(charIndex < characters.length) {				
@@ -427,7 +435,7 @@ public class BattleUI {
 				if (introTimer3 / animationSpeed < totalFrames) {g2.drawImage(playerBackFrames[introTimer3 / animationSpeed], playerBackX, 272, 240, 240, null);}
 				else {
 					g2.drawImage(playerBack1, playerBackX, 272, 240, 240, null);
-					g2.drawImage(playerPokemonImage, 50, 296, 240, 240, null);
+					g2.drawImage(playerPokemonImage, 50, playerPokemonY, 240, 240, null);
 				}
 				
 				if (!shiftedTrainerIcons) {
@@ -460,8 +468,8 @@ public class BattleUI {
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
-		g2.drawImage(playerPokemonImage, 50, 296, 240, 240, null);
-		g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
+		g2.drawImage(playerPokemonImage, 50, playerPokemonY, 240, 240, null);
+		g2.drawImage(oppPokemonImage, 530, opponentPokemonY, 192, 192, null);
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
 		
@@ -607,7 +615,7 @@ public class BattleUI {
 		}
 		
 		else if(turnCounter == 1) {
-			if(playerObj.getCurrentPokemon().hasFainted() == false && opponentObj.getCurrentPokemon().hasFainted() == false) {
+			if(playerObj.getCurrentPokemon().hasFainted() == false && opponentObj.getCurrentPokemon().hasFainted() == false) {				
 				char characters[] = inCombatTextAL.get(inCombatTextIndex).toCharArray();
 				
 				if(charIndex < characters.length) {
@@ -626,20 +634,71 @@ public class BattleUI {
 				for(String line : currentDialogue.split("\n")) {g2.drawString(line, 64, 512+64);}
 			}	
 			else {
-				if(playerObj.getCurrentPokemon().hasFainted()) {
-					checkForAvailablePokemon(playerObj);
-				}
-				else if(opponentObj.getCurrentPokemon().hasFainted()) {
-					checkForAvailablePokemon(opponentObj);
-				}
+				turnCounter = 2;
 			}
 		}
 		else if(turnCounter == 2) {
 			if(playerObj.getCurrentPokemon().hasFainted()) {
-				checkForAvailablePokemon(playerObj);
+				//1 - Display fainted text
+				String text = playerObj.getCurrentPokemon().getName()+" has fainted!";
+				char characters[] = text.toCharArray();
+				
+				if(charIndex < characters.length) {
+					String s = String.valueOf(characters[charIndex]);
+					combinedText = combinedText + s;
+					currentDialogue = combinedText;
+					charIndex++;
+				}
+				
+				for(String line : currentDialogue.split("\n")) {g2.drawString(line, 64, 512+64);}
+				
+				//2 - Drop fainted pokemon sprite
+				if(playerPokemonY < 500) {
+					playerPokemonY += 4;
+				}
+				
+				//3 - If text finished and drop sprited finished then we can continue then uses presses enter
+				if(charIndex == characters.length && playerPokemonY >= 500) {
+					if(gamePanel.getKeyHandler().enterPressed == true) {
+						charIndex = 0;
+						combinedText = "";
+						
+						checkForAvailablePokemon(playerObj);
+						gamePanel.getKeyHandler().enterPressed = false;
+						
+					}
+				}
 			}
 			else if(opponentObj.getCurrentPokemon().hasFainted()) {
-				checkForAvailablePokemon(opponentObj);
+				//1 - Display fainted text
+				String text = opponentObj.getCurrentPokemon().getName()+" has fainted!";
+				char characters[] = text.toCharArray();
+				
+				if(charIndex < characters.length) {
+					String s = String.valueOf(characters[charIndex]);
+					combinedText = combinedText + s;
+					currentDialogue = combinedText;
+					charIndex++;
+				}
+				
+				for(String line : currentDialogue.split("\n")) {g2.drawString(line, 64, 512+64);}
+				
+				//2 - Drop fainted pokemon sprite
+				if(opponentPokemonY < 600) {
+					opponentPokemonY += 8;
+				}
+				
+				//3 - If text finished and drop sprited finished then we can continue then uses presses enter
+				if(charIndex == characters.length && opponentPokemonY >= 500) {
+					if(gamePanel.getKeyHandler().enterPressed == true) {
+						charIndex = 0;
+						combinedText = "";
+						
+						checkForAvailablePokemon(opponentObj);
+						gamePanel.getKeyHandler().enterPressed = false;
+						
+					}
+				}
 			}
 			else {
 				turnCounter++;
@@ -712,7 +771,7 @@ public class BattleUI {
 		}
 		
 		if(opponentLost) {
-			
+			oppLost_EndingBattle();
 		}
 		
 	}
@@ -722,14 +781,14 @@ public class BattleUI {
 		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
 		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
 		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
-		g2.drawImage(oppPokemonImage, 530, 120, 192, 192, null);
+		g2.drawImage(oppPokemonImage, 530, opponentPokemonY, 192, 192, null);
 		healthBarOppUI();
 		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
 		
 		if(endingIndex == 0) {
 			//Dialogue
-			char characters[] = endingTextAL.get(endingDialogueIndex).toCharArray();
+			char characters[] = endingTextAL_oppWin.get(endingDialogueIndex).toCharArray();
 			if(charIndex < characters.length) {
 				String s = String.valueOf(characters[charIndex]);					
 				combinedText = combinedText + s;
@@ -784,7 +843,81 @@ public class BattleUI {
 		}
 	}
 	
-	
+	private void oppLost_EndingBattle() {
+		//Images
+		g2.drawImage(fieldBG, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
+		g2.drawImage(fieldBasePlayer, basePlayerX, 448, 512 + (512/3), 64, null);
+		g2.drawImage(fieldBaseOpponent, baseOpponentX, 220, 265 + (265/3), 128 + (128/3), null);
+		g2.drawImage(playerPokemonImage, 50, playerPokemonY, 240, 240, null);
+		healthBarPlayerUI();
+		
+		g2.drawImage(opponentFront, opponentFrontX, 120, 192, 192, null);
+		
+		g2.drawImage(battleOverlay, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		g2.drawImage(textbox, 0, 512, gamePanel.getScreenWidth(), gamePanel.getScreenHeight() / 5, null);
+		
+		if(endingIndex == 0) {
+			//Dialogue
+			char characters[] = endingTextAL_playerWin.get(endingDialogueIndex).toCharArray();
+			if(charIndex < characters.length) {
+				String s = String.valueOf(characters[charIndex]);					
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
+			
+			for(String line : currentDialogue.split("\n")) {
+				g2.drawString(line, 64, 512+64);
+			}
+			
+			if(endingDialogueIndex >= 1 && opponentFrontX >= 600) {
+				opponentFrontX-=5;
+			}
+			
+			if(charIndex == characters.length) {
+				if(endingDialogueIndex < opponentObj.getInBattleLostTextAL().size()) {
+					if(gamePanel.getKeyHandler().enterPressed == true) {
+						charIndex = 0;
+						combinedText = "";
+						endingCounter = 0;
+						endingDialogueIndex++;
+						gamePanel.getKeyHandler().enterPressed = false;
+					}
+				}
+				else {
+					endingCounter++;
+		        	
+		        	if(endingCounter == 60) {
+		        		charIndex = 0;
+						combinedText = "";
+						endingCounter = 0;
+						endingDialogueIndex = 0;
+						endingIndex = 1;
+		        	}
+				}
+			}
+		}
+		else {
+			alpha += 0.01f; 
+	        if (alpha > 1.0f) {
+	        	alpha = 1.0f;
+	        	
+	        	endingCounter++;
+	        	
+	        	if(endingCounter == 70) {
+	        		battleEnding = false;
+		        	opponentLost = false;
+		        	endingIndex = 0;
+		        	endingCounter = 0;
+		        	gamePanel.setGameState(gamePanel.getPlayState());
+	        	}
+	        }
+	        
+	        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+	        g2.setColor(Color.BLACK);
+	        g2.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
+	}
 	
 	
 	
@@ -867,7 +1000,7 @@ public class BattleUI {
 	
 	
 	private void playerHitOpponent() {
-		if(oppHealthBarWidth == newHealthBarWidthO) {
+		if(oppHealthBarWidth <= 0 || oppHealthBarWidth == newHealthBarWidthO) {
 			opponentObj.getCurrentPokemon().takeDamage(playerDamageToOpponent);
 			charIndex = 0;
 			combinedText = "";
@@ -880,7 +1013,7 @@ public class BattleUI {
 	}
 	
 	private void opponentHitPlayer() {
-		if(playerHealthBarWidth == newHealthBarWidthP) {
+		if(playerHealthBarWidth <= 0 || playerHealthBarWidth == newHealthBarWidthP) {
 			playerObj.getCurrentPokemon().takeDamage(opponentDamageToPlayer);
 			charIndex = 0;
 			combinedText = "";
@@ -899,6 +1032,8 @@ public class BattleUI {
 				trainer.setCurrentPokemon(trainer.findFirstMemberWithHealth());
 				inCombatTextIndex = 0;
 				turnCounter=0;
+				playerPokemonY = 296;
+				opponentPokemonY = 120;
 				commandsBoolean = true;
 				playingMoveBoolean = false;
 			}
@@ -1177,6 +1312,9 @@ public class BattleUI {
 		 newHealthBarWidthP = 152;
 		 newHealthBarWidthO = 152;
 		
+		playerPokemonY = 296;
+		opponentPokemonY = 120; 
+		 
 		//Intro Booleans
 		barsInPlace = false;
 		iconsInPlace = false;
