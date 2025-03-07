@@ -31,17 +31,12 @@ public class DialogueUI {
 	
 	public Entity npc;
 	
-	
-	
-	
 	public DialogueUI(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
 		
 		loadDialogueStuff();
 	}
 	
-
-    
 	public void draw(Graphics2D g2) {
 		this.g2 = g2;
 		

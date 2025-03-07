@@ -32,7 +32,7 @@ public class Entity {
 	public boolean collisionOn = false;
 	public int actionCooldownCounter = 0;
 	
-	public String dialogues[][] = new String[20][20];
+	public String dialogues[][] = new String[2][5];
 	public int dialogueSet = 0;
 	public int dialogueIndex = 0;
 	
@@ -57,15 +57,7 @@ public class Entity {
 
 	public void setAction() {}
 	
-	public void speak() {
-		/*
-		if(dialogues[dialogueIndex] == null) {
-			dialogueIndex = 0;
-		}
-		gamePanel.getDialogueUi().currentDialogue = dialogues[dialogueIndex];
-		dialogueIndex++;
-		*/
-	}
+	public void speak() {}
 	
 	public void facePlayer() {
 		switch(gamePanel.getPlayer().direction) {

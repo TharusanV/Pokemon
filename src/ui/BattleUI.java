@@ -134,6 +134,8 @@ public class BattleUI {
 	int newHealthBarWidthP = 152;
 	int newHealthBarWidthO = 152;
 	
+	int lengthOfDialogue = 0;
+	
 	//Intro Booleans
 	boolean barsInPlace = false;
 	boolean iconsInPlace = false;
@@ -221,8 +223,11 @@ public class BattleUI {
 		endingTextAL_oppWin.add("You blacked out!");
 		
 		endingTextAL_playerWin.add("You defeated " + opponentObj.getName());
-		for(int i = 0; i < opponentObj.getInBattleLostTextAL().size(); i++) {
-			endingTextAL_playerWin.add(opponentObj.getInBattleLostTextAL().get(i));
+		for(int i = 0; i < opponentObj.dialogues[1].length; i++) {
+			if(opponentObj.dialogues[1][i] != null){
+				endingTextAL_playerWin.add(opponentObj.dialogues[1][i]);
+				lengthOfDialogue++;
+			}
 		}
 	}
 	
@@ -875,7 +880,7 @@ public class BattleUI {
 			}
 			
 			if(charIndex == characters.length) {
-				if(endingDialogueIndex < opponentObj.getInBattleLostTextAL().size()) {
+				if(endingDialogueIndex < lengthOfDialogue) {
 					if(gamePanel.getKeyHandler().enterPressed == true) {
 						charIndex = 0;
 						combinedText = "";
@@ -888,6 +893,7 @@ public class BattleUI {
 					endingCounter++;
 		        	
 		        	if(endingCounter == 60) {
+		        		gamePanel.getKeyHandler().enterPressed = false;
 		        		charIndex = 0;
 						combinedText = "";
 						endingCounter = 0;
@@ -905,6 +911,8 @@ public class BattleUI {
 	        	endingCounter++;
 	        	
 	        	if(endingCounter == 70) {
+	        		opponentObj.setCanBattle(false);
+	        		opponentObj.dialogueSet = 1;
 	        		battleEnding = false;
 		        	opponentLost = false;
 		        	endingIndex = 0;

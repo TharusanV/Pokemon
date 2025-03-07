@@ -26,19 +26,21 @@ public class AssetSetter {
 		gamePanel.getNpc()[0] = new NPC(gamePanel, "FatGuy", "NPC_06");
 		gamePanel.getNpc()[0].worldX_pos = 600 * gamePanel.scale;
 		gamePanel.getNpc()[0].worldY_pos = 645 * gamePanel.scale;
-		String bills_dialogues[][] = new String[20][20];
+		String bills_dialogues[][] = new String[2][5];
 		bills_dialogues[0][0] = "Bill: I  heard  that  Tharusan  guy  \nis  a  decent  programmer.";
 		bills_dialogues[0][1] = "Bill: Have  Fun!";
 		gamePanel.getNpc()[0].setDialogue(bills_dialogues);
 		
-		ArrayList<String> rivalLostAL = new ArrayList<String>();
-		rivalLostAL.add("JobSearch: Your hired!");
-		rivalLostAL.add("Your next on the list after Tharusan!");
-		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right", rivalLostAL);
+		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right");
 		gamePanel.getNpc()[1].worldX_pos = 430 * gamePanel.scale;
 		gamePanel.getNpc()[1].worldY_pos = 550 * gamePanel.scale;
-		String rival_dialogues[][] = new String[20][20];
+		String rival_dialogues[][] = new String[2][5];
 		rival_dialogues[0][0] = "JobSearch: You want a job?";
+		rival_dialogues[1][0] = "JobSearch: Your hired!";
+		rival_dialogues[1][1] = "Your next on the list after Tharusan!";
+		rival_dialogues[2][0] = "Test!";
+		
+		
 		gamePanel.getNpc()[1].setDialogue(rival_dialogues);
 	}
 }

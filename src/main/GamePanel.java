@@ -98,10 +98,10 @@ public class GamePanel extends JPanel implements Runnable {
 		pokeList = loadFiles.loadPokemons();
 		
 		playerTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/playerTeam.csv");
-		player.setTeam(playerTeam);
-		
 		rivalTeam = loadFiles.loadTrainersTeam(pokeList, moveList, "/csvFiles/rivalTeam.csv");
-		getNpc()[1].setTeam(rivalTeam);
+		
+		player.setTeam(rivalTeam);
+		getNpc()[1].setTeam(playerTeam);
 		
 		getBattleUi().setPlayerObj(player);
 	}
