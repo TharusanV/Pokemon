@@ -52,9 +52,9 @@ public class GamePanel extends JPanel implements Runnable {
 	private final int FPS = 60;
 	
 	private final TileManager tileManager = new TileManager(this);
-	private final CreateLayer groundLayer = new CreateLayer(this, tileManager, 0);
-	private final CreateLayer treeLayer = new CreateLayer(this, tileManager, 1);
-	private final CreateLayer buildingLayer = new CreateLayer(this, tileManager, 2);
+	private final CreateLayer palletTownGroundLayer = new CreateLayer(this, tileManager, 0);
+	private final CreateLayer palletTownTreeLayer = new CreateLayer(this, tileManager, 1);
+	private final CreateLayer palletTownBuildingLayer = new CreateLayer(this, tileManager, 2);
 	
 	private final Player player = new Player(this, keyHandler);
 	private final Entity obj[] = new Entity[1];
@@ -69,11 +69,23 @@ public class GamePanel extends JPanel implements Runnable {
 	private ArrayList<Pokemon> rivalTeam;
 	
 	
+	//Doors 
+	//System.out.println("1280 - X & 1104 - Y"); - Lab
+	
+	//Starting Position
+	int palletTownPlayerX = 480 * getScale();
+	int palletTownPlayerY = 220 * getScale();
+	
 	//GameStates
 	private int gameState;
 	private final int playState = 1;
 	private final int battleState = 2;
 	private final int dialogueState = 3;
+	
+	//Map Index
+	int currentMapIndex = 0;
+	int palletTownIndex = 0;
+	int labIndex = 1;
 	
 	Thread gameThread;
 	
@@ -81,8 +93,11 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setDoubleBuffered(true); //Enables better rendering performance
 	
-		this.setBackground(Color.black);
+		player.worldX_pos = palletTownPlayerX;
+		player.worldY_pos = palletTownPlayerY;
 		
+		
+		this.setBackground(Color.black);
 		this.addKeyListener(keyHandler);
 		this.setFocusable(true);
 		
@@ -91,6 +106,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public void setUpGame() {
 		//assetSetter.setObject();
 		assetSetter.setNPC();
+		
+		
 		
 		gameState = playState;
 		
@@ -162,9 +179,12 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 		
 		//Draw Map
-		groundLayer.draw(g2);
-		treeLayer.draw(g2);
-		buildingLayer.draw(g2);
+		if(currentMapIndex == palletTownIndex) {
+			palletTownGroundLayer.draw(g2);
+			palletTownTreeLayer.draw(g2);
+			palletTownBuildingLayer.draw(g2);
+		}
+		
 		
 		for(int i = 0; i < npc.length; i++) {
 			if(npc[i] != null) {entityList.add(npc[i]);}
@@ -172,18 +192,6 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		entityList.add(player);
 
-		/*
-		//Note: As we are sorting, an issue is that currently if an npc has a higher y value there is an overlap issue with the player
-		Collections.sort(entityList, new Comparator<Entity>() {
-			@Override
-			public int compare(Entity e1, Entity e2) {
-				int result = Integer.compare(e1.worldX_pos, e2.worldY_pos);
-				return result;
-			}
-			
-		});
-		*/
-		
 		for(int i = 0; i < entityList.size(); i++) {
 			entityList.get(i).draw(g2);
 		}
@@ -260,16 +268,16 @@ public class GamePanel extends JPanel implements Runnable {
 		return tileManager;
 	}
 
-	public CreateLayer getGroundLayer() {
-		return groundLayer;
+	public CreateLayer getPalletTownGroundLayer() {
+		return palletTownGroundLayer;
 	}
 
-	public CreateLayer getTreeLayer() {
-		return treeLayer;
+	public CreateLayer getPalletTownTreeLayer() {
+		return palletTownTreeLayer;
 	}
 
-	public CreateLayer getBuildingLayer() {
-		return buildingLayer;
+	public CreateLayer getPalletTownBuildingLayer() {
+		return palletTownBuildingLayer;
 	}
 	
 	//ALL SETTERS & GETTERS	- P5

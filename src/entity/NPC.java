@@ -24,8 +24,8 @@ public class NPC extends Entity{
 		
 		if(canMove) {
 			collisionOn = false;
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
 			gamePanel.getCollisionChecker().checkObject(this, false);
 			gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
 			gamePanel.getCollisionChecker().checkPlayer(this);

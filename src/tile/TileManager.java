@@ -26,7 +26,7 @@ public class TileManager {
 		allTiles = new ArrayList<Tile>();
 	}
 	
-	public void getTileImage(String csvFile, boolean solid) {
+	public void getTileImage(String csvFile, boolean solid, String startingChar) {
 		String line;
 		
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -50,7 +50,7 @@ public class TileManager {
         }
         
         for (int value : valuesList) {
-        	allTiles.add(new Tile(value, solid));
+        	allTiles.add(new Tile(value, solid, startingChar));
         }
 	}
 	

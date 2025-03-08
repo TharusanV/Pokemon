@@ -1,5 +1,6 @@
 package tile;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,17 +20,36 @@ public class CreateLayer {
 		
 		mapTileNum = new int[gamePanel.getMaxWorldCol()][gamePanel.getMaxWorldRow()];
 		
+		//Pallet Town
 		if(p_imageSelect == 0) {
-			tileManager.getTileImage("res/maps/palletTown_Ground.csv", false);
+			tileManager.getTileImage("res/maps/palletTown_Ground.csv", false, "O");
 			loadMap("/maps/palletTown_Ground.csv");
 		}
 		else if(p_imageSelect == 1) {
-			tileManager.getTileImage("res/maps/palletTown_Tree.csv", true);
+			tileManager.getTileImage("res/maps/palletTown_Tree.csv", true, "O");
 			loadMap("/maps/palletTown_Tree.csv");
 		}
 		else if(p_imageSelect == 2) {
-			tileManager.getTileImage("res/maps/palletTown_Buildings.csv", true);
+			tileManager.getTileImage("res/maps/palletTown_Buildings.csv", true, "O");
 			loadMap("/maps/palletTown_Buildings.csv");
+		}
+		
+		//Lab
+		else if(p_imageSelect == 3) {
+			tileManager.getTileImage("res/maps/lab_Ground.csv", false, "I");
+			loadMap("/maps/lab_Ground.csv");
+		}
+		else if(p_imageSelect == 4) {
+			tileManager.getTileImage("res/maps/lab_Decorations.csv", false, "I");
+			loadMap("/maps/lab_Decorations.csv");
+		}
+		else if(p_imageSelect == 5) {
+			tileManager.getTileImage("res/maps/lab_Objects.csv", true, "I");
+			loadMap("/maps/lab_Objects.csv");
+		}
+		else if(p_imageSelect == 5) {
+			tileManager.getTileImage("res/maps/lab_Wall.csv", true, "I");
+			loadMap("/maps/lab_Wall.csv");
 		}
 	}
 	
@@ -81,6 +101,7 @@ public class CreateLayer {
 				for (Tile tile : tileManager.allTiles) {
 					if (tile.value == tileNum) {
 			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.getScaledTileSize(), gamePanel.getScaledTileSize(), null);
+			            //p_g2.drawString(Integer.toString(worldCol)+"/"+Integer.toString(worldRow), screenX, screenY);
 			            break;
 			        }
 				}

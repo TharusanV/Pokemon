@@ -41,8 +41,8 @@ public class Player extends Entity {
 	}
 	
 	public void setDefaultValues() {
-		worldX_pos = 480 * gamePanel.getScale();
-		worldY_pos = 220 * gamePanel.getScale();
+		//worldX_pos = 480 * gamePanel.getScale();
+		//worldY_pos = 220 * gamePanel.getScale();
 		speed = 4;
 		direction = "down";
 	}	
@@ -65,8 +65,8 @@ public class Player extends Entity {
 			
 			//Check tile collision for movement
 			collisionOn = false;
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
+			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
 			//Check object collision
 			int objIndex = gamePanel.getCollisionChecker().checkObject(this, true);
 			pickUpObject(objIndex);

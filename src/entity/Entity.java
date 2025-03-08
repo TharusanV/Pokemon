@@ -32,7 +32,7 @@ public class Entity {
 	public boolean collisionOn = false;
 	public int actionCooldownCounter = 0;
 	
-	public String dialogues[][] = new String[2][5];
+	public String dialogues[][] = new String[3][5];
 	public int dialogueSet = 0;
 	public int dialogueIndex = 0;
 	
@@ -47,7 +47,7 @@ public class Entity {
 	public Entity(GamePanel gamePanel) {
 		this.gamePanel = gamePanel;
 		
-		solidArea = new Rectangle(0, 12, 32 * gamePanel.getScale(), 36 * gamePanel.getScale());
+		solidArea = new Rectangle(0, 12, 32 * gamePanel.getScale(), 32 * gamePanel.getScale());
 		solidAreaDefaultX = solidArea.x;
 		solidAreaDefaultY = solidArea.y;
 		
@@ -89,8 +89,8 @@ public class Entity {
 		setAction();
 		
 		collisionOn = false;
-		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getTreeLayer());
-		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getBuildingLayer());
+		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
+		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
 		gamePanel.getCollisionChecker().checkObject(this, false);
 		gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
 		gamePanel.getCollisionChecker().checkPlayer(this);

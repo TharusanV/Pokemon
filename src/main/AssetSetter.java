@@ -34,7 +34,7 @@ public class AssetSetter {
 		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right");
 		gamePanel.getNpc()[1].worldX_pos = 430 * gamePanel.scale;
 		gamePanel.getNpc()[1].worldY_pos = 550 * gamePanel.scale;
-		String rival_dialogues[][] = new String[2][5];
+		String rival_dialogues[][] = new String[3][5];
 		rival_dialogues[0][0] = "JobSearch: You want a job?";
 		rival_dialogues[1][0] = "JobSearch: Your hired!";
 		rival_dialogues[1][1] = "Your next on the list after Tharusan!";

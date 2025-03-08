@@ -10,11 +10,11 @@ public class Tile {
 	public BufferedImage image;
 	public boolean collision;
 	
-	public Tile(int p_value, boolean p_collision) {
+	public Tile(int p_value, boolean p_collision, String startingChar) {
 		this.value = p_value;
 		
 		try {
-			this.image = ImageIO.read(getClass().getResourceAsStream("/tiles/O_" + String.valueOf(p_value) + ".png"));
+			this.image = ImageIO.read(getClass().getResourceAsStream("/tiles/"+startingChar+"_" + String.valueOf(p_value) + ".png"));
 			
 		}catch(IOException e){
 			e.printStackTrace();
