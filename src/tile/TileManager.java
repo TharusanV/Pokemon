@@ -17,16 +17,15 @@ public class TileManager {
 	GamePanel gamePanel;
 	
 	public ArrayList<Tile> allTiles;
-	ArrayList<Integer> valuesList;
 	
 	public TileManager(GamePanel p_gamePanel) {
 		this.gamePanel = p_gamePanel;
 		
-		valuesList = new ArrayList<>();
 		allTiles = new ArrayList<Tile>();
 	}
 	
 	public void getTileImage(String csvFile, boolean solid, String startingChar) {
+		ArrayList<Integer> valuesList = new ArrayList<>();
 		String line;
 		
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {

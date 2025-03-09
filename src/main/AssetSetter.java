@@ -23,7 +23,7 @@ public class AssetSetter {
 	}
 	
 	public void setNPC() {
-		gamePanel.getNpc()[0] = new NPC(gamePanel, "FatGuy", "NPC_06");
+		gamePanel.getNpc()[0] = new NPC(gamePanel, "FatGuy", "NPC_06", 0);
 		gamePanel.getNpc()[0].worldX_pos = 600 * gamePanel.scale;
 		gamePanel.getNpc()[0].worldY_pos = 645 * gamePanel.scale;
 		String bills_dialogues[][] = new String[2][5];
@@ -31,7 +31,7 @@ public class AssetSetter {
 		bills_dialogues[0][1] = "Bill: Have  Fun!";
 		gamePanel.getNpc()[0].setDialogue(bills_dialogues);
 		
-		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right");
+		gamePanel.getNpc()[1] = new Trainer(gamePanel, "RivalCharacter", "RIVAL", "JobSearch", true, "right", 0);
 		gamePanel.getNpc()[1].worldX_pos = 430 * gamePanel.scale;
 		gamePanel.getNpc()[1].worldY_pos = 550 * gamePanel.scale;
 		String rival_dialogues[][] = new String[3][5];

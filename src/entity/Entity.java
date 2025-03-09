@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import battle.Move;
 import battle.Pokemon;
 import main.GamePanel;
+import tile.CreateLayer;
 
 public class Entity {
 	
@@ -41,6 +42,8 @@ public class Entity {
 	public boolean collision = false;
 	
 	public boolean canMove = true;
+	
+	int assignedMap;
 	
 	ArrayList<Pokemon> team;
 	
@@ -89,8 +92,15 @@ public class Entity {
 		setAction();
 		
 		collisionOn = false;
-		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
-		gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
+		
+		for(int i = 0; i < gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).size(); i++) {
+			CreateLayer solidLayer = gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).get(i);
+			
+			if(solidLayer.isASolidLayer()) {
+				gamePanel.getCollisionChecker().checkTile(this, solidLayer);
+			}
+		}
+
 		gamePanel.getCollisionChecker().checkObject(this, false);
 		gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
 		gamePanel.getCollisionChecker().checkPlayer(this);
@@ -223,7 +233,13 @@ public class Entity {
 		this.dialogues = p_dialogues;
 	}
 	
-	
+	public int getAssignedMap() {
+		return assignedMap;
+	}
+
+	public void setAssignedMap(int assignedMap) {
+		this.assignedMap = assignedMap;
+	}
 	
 	
 

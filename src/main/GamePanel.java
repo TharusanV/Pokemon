@@ -51,11 +51,24 @@ public class GamePanel extends JPanel implements Runnable {
 	//Variable for FPS
 	private final int FPS = 60;
 	
-	private final TileManager tileManager = new TileManager(this);
-	private final CreateLayer palletTownGroundLayer = new CreateLayer(this, tileManager, 0);
-	private final CreateLayer palletTownTreeLayer = new CreateLayer(this, tileManager, 1);
-	private final CreateLayer palletTownBuildingLayer = new CreateLayer(this, tileManager, 2);
+	//Map Index
+	public int currentMapIndex = 0;
+	int palletTownIndex = 0;
+	int labIndex = 1;
 	
+	private final TileManager tileManager = new TileManager(this);
+	private ArrayList<ArrayList<CreateLayer>> allMapLayers = new ArrayList<ArrayList<CreateLayer>>();
+	private ArrayList<CreateLayer> palletTownLayers = new ArrayList<CreateLayer>();
+	private ArrayList<CreateLayer> labPalletTownLayers = new ArrayList<CreateLayer>();
+	
+	//Starting Position
+	int palletTownPlayerX = 480 * getScale();
+	int palletTownPlayerY = 220 * getScale();
+	
+	int labPalletTownPlayerX = 230 * getScale();
+	int labPalletTownPlayerY = 430 * getScale();
+	
+	//Entities
 	private final Player player = new Player(this, keyHandler);
 	private final Entity obj[] = new Entity[1];
 	private final Entity npc[] = new Entity[3];
@@ -67,25 +80,14 @@ public class GamePanel extends JPanel implements Runnable {
 	private ArrayList<Pokemon> pokeList;
 	private ArrayList<Pokemon> playerTeam;
 	private ArrayList<Pokemon> rivalTeam;
-	
-	
-	//Doors 
-	//System.out.println("1280 - X & 1104 - Y"); - Lab
-	
-	//Starting Position
-	int palletTownPlayerX = 480 * getScale();
-	int palletTownPlayerY = 220 * getScale();
-	
+		
 	//GameStates
 	private int gameState;
 	private final int playState = 1;
 	private final int battleState = 2;
 	private final int dialogueState = 3;
 	
-	//Map Index
-	int currentMapIndex = 0;
-	int palletTownIndex = 0;
-	int labIndex = 1;
+
 	
 	Thread gameThread;
 	
@@ -93,6 +95,19 @@ public class GamePanel extends JPanel implements Runnable {
 		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
 		this.setDoubleBuffered(true); //Enables better rendering performance
 	
+		allMapLayers.add(palletTownLayers);
+		allMapLayers.add(labPalletTownLayers);
+		
+		palletTownLayers.add(new CreateLayer(this, tileManager, 0));
+		palletTownLayers.add(new CreateLayer(this, tileManager, 1));
+		palletTownLayers.add(new CreateLayer(this, tileManager, 2));
+		
+		
+		labPalletTownLayers.add(new CreateLayer(this, tileManager, 3));
+		labPalletTownLayers.add(new CreateLayer(this, tileManager, 6));
+		labPalletTownLayers.add(new CreateLayer(this, tileManager, 4));
+		labPalletTownLayers.add(new CreateLayer(this, tileManager, 5));
+		
 		player.worldX_pos = palletTownPlayerX;
 		player.worldY_pos = palletTownPlayerY;
 		
@@ -104,10 +119,10 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setUpGame() {
+		
+		
 		//assetSetter.setObject();
 		assetSetter.setNPC();
-		
-		
 		
 		gameState = playState;
 		
@@ -157,8 +172,11 @@ public class GamePanel extends JPanel implements Runnable {
 			//NPC
 			for(int i = 0; i < npc.length; i++) {
 				if(npc[i] != null) {
-					npc[i].update();
+					if(currentMapIndex == npc[i].getAssignedMap()) {
+						npc[i].update();
+					}
 				}
+				
 			}
 		}
 		
@@ -180,14 +198,23 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		//Draw Map
 		if(currentMapIndex == palletTownIndex) {
-			palletTownGroundLayer.draw(g2);
-			palletTownTreeLayer.draw(g2);
-			palletTownBuildingLayer.draw(g2);
+			for(int i = 0; i < palletTownLayers.size(); i++) {
+				palletTownLayers.get(i).draw(g2);
+			}
+		}
+		else if(currentMapIndex == labIndex) {
+			for(int i = 0; i < labPalletTownLayers.size(); i++) {
+				labPalletTownLayers.get(i).draw(g2);
+			}
 		}
 		
 		
 		for(int i = 0; i < npc.length; i++) {
-			if(npc[i] != null) {entityList.add(npc[i]);}
+			if(npc[i] != null) {
+				if(currentMapIndex == npc[i].getAssignedMap()) {
+					entityList.add(npc[i]);
+				}
+			}
 		}
 		
 		entityList.add(player);
@@ -267,19 +294,31 @@ public class GamePanel extends JPanel implements Runnable {
 	public TileManager getTileManager() {
 		return tileManager;
 	}
-
-	public CreateLayer getPalletTownGroundLayer() {
-		return palletTownGroundLayer;
-	}
-
-	public CreateLayer getPalletTownTreeLayer() {
-		return palletTownTreeLayer;
-	}
-
-	public CreateLayer getPalletTownBuildingLayer() {
-		return palletTownBuildingLayer;
-	}
 	
+	public ArrayList<ArrayList<CreateLayer>> getAllMapLayers() {
+		return allMapLayers;
+	}
+
+	public void setAllMapLayers(ArrayList<ArrayList<CreateLayer>> allMapLayers) {
+		this.allMapLayers = allMapLayers;
+	}
+
+	public ArrayList<CreateLayer> getPalletTownLayers() {
+		return palletTownLayers;
+	}
+
+	public void setPalletTownLayers(ArrayList<CreateLayer> palletTownLayers) {
+		this.palletTownLayers = palletTownLayers;
+	}
+
+	public ArrayList<CreateLayer> getLabPalletTownLayers() {
+		return labPalletTownLayers;
+	}
+
+	public void setLabPalletTownLayers(ArrayList<CreateLayer> labPalletTownLayers) {
+		this.labPalletTownLayers = labPalletTownLayers;
+	}
+
 	//ALL SETTERS & GETTERS	- P5
 	public KeyHandler getKeyHandler() {
 		return keyHandler;

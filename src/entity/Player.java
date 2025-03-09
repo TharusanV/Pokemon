@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import battle.Move;
 import battle.Pokemon;
 import main.GamePanel;
+import tile.CreateLayer;
 import utility.KeyHandler;
 
 public class Player extends Entity {
@@ -65,8 +66,13 @@ public class Player extends Entity {
 			
 			//Check tile collision for movement
 			collisionOn = false;
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
+			for(int i = 0; i < gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).size(); i++) {
+				CreateLayer solidLayer = gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).get(i);
+				
+				if(solidLayer.isASolidLayer()) {
+					gamePanel.getCollisionChecker().checkTile(this, solidLayer);
+				}
+			}
 			//Check object collision
 			int objIndex = gamePanel.getCollisionChecker().checkObject(this, true);
 			pickUpObject(objIndex);

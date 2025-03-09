@@ -22,7 +22,7 @@ public class Trainer extends Entity {
 	BufferedImage frontIcon;
 	BufferedImage bar;
 	
-	public Trainer(GamePanel gamePanel, String folderName, String character, String p_name, boolean p_canBattle, String p_startingDirection) {
+	public Trainer(GamePanel gamePanel, String folderName, String character, String p_name, boolean p_canBattle, String p_startingDirection, int p_assignedMap) {
 		super(gamePanel);
 		
 		speed = 1;
@@ -30,6 +30,8 @@ public class Trainer extends Entity {
 		dialogueSet = -1;
 		
 		getCharacterImage(folderName, character);
+		
+		this.assignedMap = p_assignedMap;
 		
 		this.canBattle = p_canBattle;
 		this.name = p_name;

@@ -12,6 +12,7 @@ public class CreateLayer {
 
 	private GamePanel gamePanel; 
 	private TileManager tileManager;
+	private boolean isASolidLayer = false; 
 	public int mapTileNum[][];
 	
 	public CreateLayer(GamePanel p_gamePanel, TileManager p_tileManager, int p_imageSelect) {
@@ -26,10 +27,12 @@ public class CreateLayer {
 			loadMap("/maps/palletTown_Ground.csv");
 		}
 		else if(p_imageSelect == 1) {
+			this.isASolidLayer = true;
 			tileManager.getTileImage("res/maps/palletTown_Tree.csv", true, "O");
 			loadMap("/maps/palletTown_Tree.csv");
 		}
 		else if(p_imageSelect == 2) {
+			this.isASolidLayer = true;
 			tileManager.getTileImage("res/maps/palletTown_Buildings.csv", true, "O");
 			loadMap("/maps/palletTown_Buildings.csv");
 		}
@@ -44,10 +47,12 @@ public class CreateLayer {
 			loadMap("/maps/lab_Decorations.csv");
 		}
 		else if(p_imageSelect == 5) {
+			this.isASolidLayer = true;
 			tileManager.getTileImage("res/maps/lab_Objects.csv", true, "I");
 			loadMap("/maps/lab_Objects.csv");
 		}
-		else if(p_imageSelect == 5) {
+		else if(p_imageSelect == 6) {
+			this.isASolidLayer = true;
 			tileManager.getTileImage("res/maps/lab_Wall.csv", true, "I");
 			loadMap("/maps/lab_Wall.csv");
 		}
@@ -116,4 +121,14 @@ public class CreateLayer {
 		}
 
 	}
+
+	public boolean isASolidLayer() {
+		return isASolidLayer;
+	}
+
+	public void setASolidLayer(boolean isASolidLayer) {
+		this.isASolidLayer = isASolidLayer;
+	}
+	
+	
 }

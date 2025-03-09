@@ -21,10 +21,10 @@ public class EventHandler {
 		//This while loop creates the eventRect on each tile and stores it in the array
 		while(col < gamePanel.getMaxWorldCol() && row < gamePanel.getMaxWorldRow()) {
 		    eventRect[col][row] = new EventRect();
-		    eventRect[col][row].x = 23;
-		    eventRect[col][row].y = 23;
-		    eventRect[col][row].width = 2; 
-		    eventRect[col][row].height = 2; 
+		    eventRect[col][row].x = 0;
+		    eventRect[col][row].y = 0;
+		    eventRect[col][row].width = gamePanel.getScaledTileSize(); 
+		    eventRect[col][row].height = gamePanel.getScaledTileSize(); 
 		    eventRect[col][row].eventRectDefaultX = eventRect[col][row].x;
 		    eventRect[col][row].eventRectDefaultY = eventRect[col][row].y;
 		    
@@ -48,15 +48,17 @@ public class EventHandler {
         }
         
         if (canTouchEvent == true) {
-        	//Pallet Town
-        	if(gamePanel.currentMapIndex == 0) {
-        		if(activateEvent(6,6,"up") == true ){openDoorEvent(6,6,gamePanel.getDialogueState());};
-        	}
-        	//Lab
         	
         }
         
-        
+        //Pallet Town
+    	if(gamePanel.currentMapIndex == 0) {
+    		if(activateEvent(20,18,"up") == true ){openDoorEvent();};
+    	}
+    	//Lab
+    	else if(gamePanel.currentMapIndex == 1) {
+    		if(activateEvent(7,14,"down") == true ){openDoorEvent();};
+    	}
 	}
 	
 	public boolean activateEvent(int col, int row, String reqDirection) {
@@ -89,8 +91,19 @@ public class EventHandler {
 		return hit;
 	}
 	
-	public void openDoorEvent(int col, int row, int gameState) {
-		System.out.println("test");
+	public void openDoorEvent() {
+		if(gamePanel.currentMapIndex == 0) {
+			gamePanel.currentMapIndex = 1;
+			gamePanel.getPlayer().worldX_pos = gamePanel.labPalletTownPlayerX;
+			gamePanel.getPlayer().worldY_pos = gamePanel.labPalletTownPlayerY;
+		}
+		else {
+			gamePanel.currentMapIndex = 0;
+			gamePanel.getPlayer().worldX_pos = gamePanel.palletTownPlayerX;
+			gamePanel.getPlayer().worldY_pos = gamePanel.palletTownPlayerY;
+		}
+			
+		
 		//gamePanel.setGameState(gameState);
 		//gamePanel.getDialogueUi().currentDialogue = "Test";
 		//canTouchEvent = false; - //One time so event now can't happen. If you want this uncomment this

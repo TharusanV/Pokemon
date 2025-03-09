@@ -5,12 +5,14 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import main.GamePanel;
+import tile.CreateLayer;
 
 public class NPC extends Entity{
 	
-	
-	public NPC(GamePanel gamePanel, String folderName, String character) {
+	public NPC(GamePanel gamePanel, String folderName, String character, int p_assignedMap) {
 		super(gamePanel);
+		
+		this.assignedMap = p_assignedMap;
 		
 		speed = 1;
 		direction = "down";
@@ -24,8 +26,16 @@ public class NPC extends Entity{
 		
 		if(canMove) {
 			collisionOn = false;
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownTreeLayer());
-			gamePanel.getCollisionChecker().checkTile(this, gamePanel.getPalletTownBuildingLayer());
+			
+			for(int i = 0; i < gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).size(); i++) {
+				CreateLayer solidLayer = gamePanel.getAllMapLayers().get(gamePanel.currentMapIndex).get(i);
+				
+				if(solidLayer.isASolidLayer()) {
+					gamePanel.getCollisionChecker().checkTile(this, solidLayer);
+				}
+			}
+			
+			
 			gamePanel.getCollisionChecker().checkObject(this, false);
 			gamePanel.getCollisionChecker().checkEntity(this, gamePanel.getNpc());
 			gamePanel.getCollisionChecker().checkPlayer(this);
@@ -115,6 +125,9 @@ public class NPC extends Entity{
 			
 		}
 	}
+
+
+	
 	
 
 }
