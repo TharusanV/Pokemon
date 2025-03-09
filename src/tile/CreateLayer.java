@@ -56,6 +56,47 @@ public class CreateLayer {
 			tileManager.getTileImage("res/maps/lab_Wall.csv", true, "I");
 			loadMap("/maps/lab_Wall.csv");
 		}
+		
+	
+		//Home F1
+		else if(p_imageSelect == 7) {
+			tileManager.getTileImage("res/maps/homeF1_Ground.csv", false, "I");
+			loadMap("/maps/homeF1_Ground.csv");
+		}
+		else if(p_imageSelect == 8) {
+			tileManager.getTileImage("res/maps/homeF1_Decorations.csv", false, "I");
+			loadMap("/maps/homeF1_Decorations.csv");
+		}
+		else if(p_imageSelect == 9) {
+			this.isASolidLayer = true;
+			tileManager.getTileImage("res/maps/homeF1_Objects.csv", true, "I");
+			loadMap("/maps/homeF1_Objects.csv");
+		}
+		else if(p_imageSelect == 10) {
+			this.isASolidLayer = true;
+			tileManager.getTileImage("res/maps/homeF1_Wall.csv", true, "I");
+			loadMap("/maps/homeF1_Wall.csv");
+		}
+		
+		//Home F2
+		else if(p_imageSelect == 11) {
+			tileManager.getTileImage("res/maps/homeF2_Ground.csv", false, "I");
+			loadMap("/maps/homeF2_Ground.csv");
+		}
+		else if(p_imageSelect == 12) {
+			tileManager.getTileImage("res/maps/homeF2_Decorations.csv", false, "I");
+			loadMap("/maps/homeF2_Decorations.csv");
+		}
+		else if(p_imageSelect == 13) {
+			this.isASolidLayer = true;
+			tileManager.getTileImage("res/maps/homeF2_Objects.csv", true, "I");
+			loadMap("/maps/homeF2_Objects.csv");
+		}
+		else if(p_imageSelect == 14) {
+			this.isASolidLayer = true;
+			tileManager.getTileImage("res/maps/homeF2_Wall.csv", true, "I");
+			loadMap("/maps/homeF2_Wall.csv");
+		}
 	}
 	
 	public void loadMap(String p_fileName) {
@@ -106,7 +147,7 @@ public class CreateLayer {
 				for (Tile tile : tileManager.allTiles) {
 					if (tile.value == tileNum) {
 			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.getScaledTileSize(), gamePanel.getScaledTileSize(), null);
-			            //p_g2.drawString(Integer.toString(worldCol)+"/"+Integer.toString(worldRow), screenX, screenY);
+			            p_g2.drawString(Integer.toString(worldCol)+"/"+Integer.toString(worldRow), screenX + 28, screenY + 34);
 			            break;
 			        }
 				}

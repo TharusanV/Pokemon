@@ -55,18 +55,44 @@ public class GamePanel extends JPanel implements Runnable {
 	public int currentMapIndex = 0;
 	int palletTownIndex = 0;
 	int labIndex = 1;
+	int playerHomeF1Index = 2;
+	int playerHomeF2Index = 3;
+	int rivalHomeF1Index = 4;
+	int rivalHomeF2Index = 5;
 	
 	private final TileManager tileManager = new TileManager(this);
 	private ArrayList<ArrayList<CreateLayer>> allMapLayers = new ArrayList<ArrayList<CreateLayer>>();
 	private ArrayList<CreateLayer> palletTownLayers = new ArrayList<CreateLayer>();
 	private ArrayList<CreateLayer> labPalletTownLayers = new ArrayList<CreateLayer>();
+	private ArrayList<CreateLayer> playerHomeF1PalletTownLayers = new ArrayList<CreateLayer>();
+	private ArrayList<CreateLayer> playerHomeF2PalletTownLayers = new ArrayList<CreateLayer>();
+	private ArrayList<CreateLayer> rivalHomeF1PalletTownLayers = new ArrayList<CreateLayer>();
+	private ArrayList<CreateLayer> rivalHomeF2PalletTownLayers = new ArrayList<CreateLayer>();
 	
 	//Starting Position
-	int palletTownPlayerX = 480 * getScale();
-	int palletTownPlayerY = 220 * getScale();
+	int startingPosPlayerX = 480 * getScale(); 
+	int startingPosPlayerY = 220 * getScale();
 	
-	int labPalletTownPlayerX = 230 * getScale();
-	int labPalletTownPlayerY = 430 * getScale();
+	int enterLabPlayerX = 7 * getScaledTileSize(); ; 
+	int enterLabPlayerY = 14 * getScaledTileSize(); ;
+	int exitLabPlayerX = 20 * getScaledTileSize();  
+	int exitLabPlayerY = 17 * getScaledTileSize();
+	
+	
+	int enterHomePlayerX = 4 * getScaledTileSize();; 
+	int enterHomePlayerY = 9 * getScaledTileSize();;
+	
+	int exitPlayerHomePlayerX = 19 * getScaledTileSize(); 
+	int exitPlayerHomePlayerY = 11 * getScaledTileSize();
+	
+	int exitRivalHomePlayerX = 10 * getScaledTileSize(); 
+	int exitRivalHomePlayerY = 11 * getScaledTileSize();
+	
+	int climbStairsHomePlayerX = 11 * getScaledTileSize(); ; 
+	int climbStairsHomePlayerY = 3 * getScaledTileSize(); ; 
+	int decendStairsHomePlayerX = 10 * getScaledTileSize(); 
+	int decendStairsHomePlayerY = 3 * getScaledTileSize();  
+	
 	
 	//Entities
 	private final Player player = new Player(this, keyHandler);
@@ -97,19 +123,42 @@ public class GamePanel extends JPanel implements Runnable {
 	
 		allMapLayers.add(palletTownLayers);
 		allMapLayers.add(labPalletTownLayers);
+		allMapLayers.add(playerHomeF1PalletTownLayers);
+		allMapLayers.add(playerHomeF2PalletTownLayers);
+		allMapLayers.add(rivalHomeF1PalletTownLayers);
+		allMapLayers.add(rivalHomeF2PalletTownLayers);
 		
 		palletTownLayers.add(new CreateLayer(this, tileManager, 0));
 		palletTownLayers.add(new CreateLayer(this, tileManager, 1));
 		palletTownLayers.add(new CreateLayer(this, tileManager, 2));
-		
 		
 		labPalletTownLayers.add(new CreateLayer(this, tileManager, 3));
 		labPalletTownLayers.add(new CreateLayer(this, tileManager, 6));
 		labPalletTownLayers.add(new CreateLayer(this, tileManager, 4));
 		labPalletTownLayers.add(new CreateLayer(this, tileManager, 5));
 		
-		player.worldX_pos = palletTownPlayerX;
-		player.worldY_pos = palletTownPlayerY;
+		playerHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 7));
+		playerHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 10));
+		playerHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 8));
+		playerHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 9));
+		
+		playerHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 11));
+		playerHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 14));
+		playerHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 12));
+		playerHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 13));
+		
+		rivalHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 7));
+		rivalHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 10));
+		rivalHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 8));
+		rivalHomeF1PalletTownLayers.add(new CreateLayer(this, tileManager, 9));
+		
+		rivalHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 11));
+		rivalHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 14));
+		rivalHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 12));
+		rivalHomeF2PalletTownLayers.add(new CreateLayer(this, tileManager, 13));
+		
+		player.worldX_pos = startingPosPlayerX;
+		player.worldY_pos = startingPosPlayerY;
 		
 		
 		this.setBackground(Color.black);
@@ -197,17 +246,9 @@ public class GamePanel extends JPanel implements Runnable {
 		Graphics2D g2 = (Graphics2D)g;
 		
 		//Draw Map
-		if(currentMapIndex == palletTownIndex) {
-			for(int i = 0; i < palletTownLayers.size(); i++) {
-				palletTownLayers.get(i).draw(g2);
-			}
+		for(int i = 0; i < getAllMapLayers().get(currentMapIndex).size(); i++) {
+			getAllMapLayers().get(currentMapIndex).get(i).draw(g2);;
 		}
-		else if(currentMapIndex == labIndex) {
-			for(int i = 0; i < labPalletTownLayers.size(); i++) {
-				labPalletTownLayers.get(i).draw(g2);
-			}
-		}
-		
 		
 		for(int i = 0; i < npc.length; i++) {
 			if(npc[i] != null) {

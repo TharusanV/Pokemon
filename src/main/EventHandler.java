@@ -47,17 +47,35 @@ public class EventHandler {
             canTouchEvent = true;
         }
         
-        if (canTouchEvent == true) {
-        	
-        }
+        if (canTouchEvent == true) {}
         
         //Pallet Town
     	if(gamePanel.currentMapIndex == 0) {
-    		if(activateEvent(20,18,"up") == true ){openDoorEvent();};
+    		if(activateEvent(20,18,"up") == true ){openDoorEvent("lab");};
+    		if(activateEvent(19,12,"up") == true ){openDoorEvent("playerHome");};
+    		if(activateEvent(10,12,"up") == true ){openDoorEvent("rivalHome");};
     	}
     	//Lab
     	else if(gamePanel.currentMapIndex == 1) {
-    		if(activateEvent(7,14,"down") == true ){openDoorEvent();};
+    		if(activateEvent(7,14,"down") == true ){openDoorEvent("palletTownOutsideLab");};
+    	}
+    	//Player Home F1
+    	else if(gamePanel.currentMapIndex == 2) {
+    		if(activateEvent(4,9,"down") == true ){openDoorEvent("outsidePlayerHome");};
+    		if(activateEvent(10,3,"right") == true ){climbStairsEvent("playerHomeF2");};
+    	}
+    	//Player Home F2
+    	else if(gamePanel.currentMapIndex == 3) {
+    		if(activateEvent(11,3,"left") == true ){climbStairsEvent("playerHomeF1");};
+    	}
+    	//Rival Home F1
+    	else if(gamePanel.currentMapIndex == 4) {
+    		if(activateEvent(4,9,"down") == true ){openDoorEvent("outsideRivalHome");};
+    		if(activateEvent(10,3,"right") == true ){climbStairsEvent("rivalHomeF2");};
+    	}
+    	//Rival Home F2
+    	else if(gamePanel.currentMapIndex == 5) {
+    		if(activateEvent(11,3,"left") == true ){climbStairsEvent("rivalHomeF1");};
     	}
 	}
 	
@@ -91,23 +109,85 @@ public class EventHandler {
 		return hit;
 	}
 	
-	public void openDoorEvent() {
-		if(gamePanel.currentMapIndex == 0) {
-			gamePanel.currentMapIndex = 1;
-			gamePanel.getPlayer().worldX_pos = gamePanel.labPalletTownPlayerX;
-			gamePanel.getPlayer().worldY_pos = gamePanel.labPalletTownPlayerY;
+	public void openDoorEvent(String location) {
+		//Pallet Town
+		if(gamePanel.currentMapIndex == gamePanel.palletTownIndex) {
+			if(location == "lab") {
+				gamePanel.currentMapIndex = 1;
+				gamePanel.getPlayer().worldX_pos = gamePanel.enterLabPlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.enterLabPlayerY;
+			}
+			else if(location == "playerHome") {
+				gamePanel.currentMapIndex = 2;
+				gamePanel.getPlayer().worldX_pos = gamePanel.enterHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.enterHomePlayerY;
+			}
+			else if(location == "rivalHome") {
+				gamePanel.currentMapIndex = 4;
+				gamePanel.getPlayer().worldX_pos = gamePanel.enterHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.enterHomePlayerY;
+			}
 		}
-		else {
-			gamePanel.currentMapIndex = 0;
-			gamePanel.getPlayer().worldX_pos = gamePanel.palletTownPlayerX;
-			gamePanel.getPlayer().worldY_pos = gamePanel.palletTownPlayerY;
+		else if(gamePanel.currentMapIndex == gamePanel.labIndex) {
+			if(location == "palletTownOutsideLab") {
+				gamePanel.currentMapIndex = 0;
+				gamePanel.getPlayer().worldX_pos = gamePanel.exitLabPlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.exitLabPlayerY;
+			}	
 		}
-			
+		else if(gamePanel.currentMapIndex == gamePanel.playerHomeF1Index) {
+			if(location == "outsidePlayerHome") {
+				gamePanel.currentMapIndex = 0;
+				gamePanel.getPlayer().worldX_pos = gamePanel.exitPlayerHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.exitPlayerHomePlayerY;
+			}	
+		}
+		else if(gamePanel.currentMapIndex == gamePanel.rivalHomeF1Index) {
+			if(location == "outsideRivalHome") {
+				gamePanel.currentMapIndex = 0;
+				gamePanel.getPlayer().worldX_pos = gamePanel.exitRivalHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.exitRivalHomePlayerY;
+			}	
+		}
 		
 		//gamePanel.setGameState(gameState);
 		//gamePanel.getDialogueUi().currentDialogue = "Test";
 		//canTouchEvent = false; - //One time so event now can't happen. If you want this uncomment this
 	}
 	
+	public void climbStairsEvent(String location) {
+		// Inside Player Home F1
+		if(gamePanel.currentMapIndex == gamePanel.playerHomeF1Index) {
+			if(location == "playerHomeF2") {
+				gamePanel.currentMapIndex = 3;
+				gamePanel.getPlayer().worldX_pos = gamePanel.climbStairsHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.climbStairsHomePlayerY;
+			}	
+		}
+		// Inside Player Home F2
+		else if(gamePanel.currentMapIndex == gamePanel.playerHomeF2Index) {
+			if(location == "playerHomeF1") {
+				gamePanel.currentMapIndex = 2;
+				gamePanel.getPlayer().worldX_pos = gamePanel.decendStairsHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.decendStairsHomePlayerY;
+			}	
+		}	
+		// Inside Rival Home F1
+		else if(gamePanel.currentMapIndex == gamePanel.rivalHomeF1Index) {
+			if(location == "rivalHomeF2") {
+				gamePanel.currentMapIndex = 5;
+				gamePanel.getPlayer().worldX_pos = gamePanel.climbStairsHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.climbStairsHomePlayerY;
+			}	
+		}
+		// Inside Rival Home F2
+		else if(gamePanel.currentMapIndex == gamePanel.rivalHomeF2Index) {
+			if(location == "rivalHomeF1") {
+				gamePanel.currentMapIndex = 4;
+				gamePanel.getPlayer().worldX_pos = gamePanel.decendStairsHomePlayerX;
+				gamePanel.getPlayer().worldY_pos = gamePanel.decendStairsHomePlayerY;
+			}	
+		}
+	}
 
 }
