@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-class MyTest {
+class AIBehaviorTests {
 
-	 @Test
-	 void testAddition() {
-	    assertEquals(5, 2 + 3);
-	 }
+	@Test
+	void test() {
+		fail("Not yet implemented");
+	}
 
 }

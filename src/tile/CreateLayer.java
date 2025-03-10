@@ -147,7 +147,7 @@ public class CreateLayer {
 				for (Tile tile : tileManager.allTiles) {
 					if (tile.value == tileNum) {
 			            p_g2.drawImage(tile.image, screenX, screenY, gamePanel.getScaledTileSize(), gamePanel.getScaledTileSize(), null);
-			            p_g2.drawString(Integer.toString(worldCol)+"/"+Integer.toString(worldRow), screenX + 28, screenY + 34);
+			            //p_g2.drawString(Integer.toString(worldCol)+"/"+Integer.toString(worldRow), screenX + 28, screenY + 34);
 			            break;
 			        }
 				}
